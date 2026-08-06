@@ -58,6 +58,8 @@ def generate_phase1_report(
 def generate_corruption_report(
     report_path,
     baseline_metrics: dict[str, Any],
+    baseline_quality: dict[str, Any],
+    baseline_freshness: dict[str, Any],
     corrupted_metrics: dict[str, Any],
     repaired_metrics: dict[str, Any],
     corrupted_quality: dict[str, Any],
@@ -67,6 +69,12 @@ def generate_corruption_report(
 ) -> None:
     """Write a markdown comparison report for baseline/corrupted/repaired."""
     path = Path(report_path)
+    def _delta(current: object, reference: object) -> object:
+        try:
+            return round(float(current) - float(reference), 6)
+        except Exception:
+            return "N/A"
+
     lines: list[str] = [
         "# Corruption Comparison Report",
         "",
@@ -74,27 +82,43 @@ def generate_corruption_report(
         f"- Baseline retrieval hit rate: {baseline_metrics.get('retrieval_hit_rate', 'N/A')}",
         f"- Corrupted retrieval hit rate: {corrupted_metrics.get('retrieval_hit_rate', 'N/A')}",
         f"- Repaired retrieval hit rate: {repaired_metrics.get('retrieval_hit_rate', 'N/A')}",
+        f"- Retrieval hit rate delta corrupted vs baseline: {_delta(corrupted_metrics.get('retrieval_hit_rate', 'N/A'), baseline_metrics.get('retrieval_hit_rate', 'N/A'))}",
+        f"- Retrieval hit rate delta repaired vs baseline: {_delta(repaired_metrics.get('retrieval_hit_rate', 'N/A'), baseline_metrics.get('retrieval_hit_rate', 'N/A'))}",
         f"- Baseline mean token F1: {baseline_metrics.get('mean_token_f1', 'N/A')}",
         f"- Corrupted mean token F1: {corrupted_metrics.get('mean_token_f1', 'N/A')}",
         f"- Repaired mean token F1: {repaired_metrics.get('mean_token_f1', 'N/A')}",
+        f"- Mean token F1 delta corrupted vs baseline: {_delta(corrupted_metrics.get('mean_token_f1', 'N/A'), baseline_metrics.get('mean_token_f1', 'N/A'))}",
+        f"- Mean token F1 delta repaired vs baseline: {_delta(repaired_metrics.get('mean_token_f1', 'N/A'), baseline_metrics.get('mean_token_f1', 'N/A'))}",
         f"- Baseline judge accuracy: {baseline_metrics.get('judge_accuracy', 'N/A')}",
         f"- Corrupted judge accuracy: {corrupted_metrics.get('judge_accuracy', 'N/A')}",
         f"- Repaired judge accuracy: {repaired_metrics.get('judge_accuracy', 'N/A')}",
+        f"- Judge accuracy delta corrupted vs baseline: {_delta(corrupted_metrics.get('judge_accuracy', 'N/A'), baseline_metrics.get('judge_accuracy', 'N/A'))}",
+        f"- Judge accuracy delta repaired vs baseline: {_delta(repaired_metrics.get('judge_accuracy', 'N/A'), baseline_metrics.get('judge_accuracy', 'N/A'))}",
         f"- Baseline mean judge score: {baseline_metrics.get('mean_judge_score', 'N/A')}",
         f"- Corrupted mean judge score: {corrupted_metrics.get('mean_judge_score', 'N/A')}",
         f"- Repaired mean judge score: {repaired_metrics.get('mean_judge_score', 'N/A')}",
+        f"- Mean judge score delta corrupted vs baseline: {_delta(corrupted_metrics.get('mean_judge_score', 'N/A'), baseline_metrics.get('mean_judge_score', 'N/A'))}",
+        f"- Mean judge score delta repaired vs baseline: {_delta(repaired_metrics.get('mean_judge_score', 'N/A'), baseline_metrics.get('mean_judge_score', 'N/A'))}",
         "",
         "## Quality Comparison",
+        f"- Baseline overall pass: {baseline_quality.get('overall_pass', 'N/A')}",
+        f"- Corrupted overall pass: {corrupted_quality.get('overall_pass', 'N/A')}",
+        f"- Repaired overall pass: {repaired_quality.get('overall_pass', 'N/A')}",
         f"- Corrupted duplicate paper_id: {corrupted_quality.get('counts', {}).get('duplicate_paper_id', 'N/A')}",
         f"- Repaired duplicate paper_id: {repaired_quality.get('counts', {}).get('duplicate_paper_id', 'N/A')}",
         f"- Corrupted blank summary: {corrupted_quality.get('counts', {}).get('blank_summary', 'N/A')}",
         f"- Repaired blank summary: {repaired_quality.get('counts', {}).get('blank_summary', 'N/A')}",
         f"- Corrupted blank text_for_embedding: {corrupted_quality.get('counts', {}).get('blank_text_for_embedding', 'N/A')}",
         f"- Repaired blank text_for_embedding: {repaired_quality.get('counts', {}).get('blank_text_for_embedding', 'N/A')}",
+        f"- Baseline stale rows: {baseline_quality.get('counts', {}).get('stale_rows', 'N/A')}",
+        f"- Corrupted stale rows: {corrupted_quality.get('counts', {}).get('stale_rows', 'N/A')}",
+        f"- Repaired stale rows: {repaired_quality.get('counts', {}).get('stale_rows', 'N/A')}",
         "",
         "## Freshness Comparison",
+        f"- Baseline stale rows: {baseline_freshness.get('stale_rows', 'N/A')}",
         f"- Corrupted stale rows: {corrupted_freshness.get('stale_rows', 'N/A')}",
         f"- Repaired stale rows: {repaired_freshness.get('stale_rows', 'N/A')}",
+        f"- Baseline is fresh: {baseline_freshness.get('is_fresh', 'N/A')}",
         f"- Corrupted is fresh: {corrupted_freshness.get('is_fresh', 'N/A')}",
         f"- Repaired is fresh: {repaired_freshness.get('is_fresh', 'N/A')}",
         "",
