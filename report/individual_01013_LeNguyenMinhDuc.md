@@ -2,15 +2,14 @@
 
 ## 1. Thông tin cá nhân
 
-| Thông tin | Nội dung |
-| :--- | :--- |
-| **Họ và tên** | Lê Nguyễn Minh Đức |
-| **MSSV** | 01013 |
-| **Khóa/Lớp** | K3 |
-| **Tên nhóm** | Nhóm 6 người (Data Pipeline & Data Observability) |
-| **Vai trò chính** | **Vai trò 5: Evaluation Owner** (Evaluation Set & Metrics Owner) |
-| **Repository** | `https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability` |
-| **Ngày hoàn thành** | 2026-08-06 |
+| Thông tin           | Nội dung                                                         |
+| :------------------ | :--------------------------------------------------------------- |
+| **Họ và tên**       | Lê Nguyễn Minh Đức                                               |
+| **MSSV**            | 01013                                                            |
+| **Khóa/Lớp**        | K3                                                               |
+| **Tên nhóm**        | Nhóm 6 người (Data Pipeline & Data Observability)                |
+| **Vai trò chính**   | **Vai trò 5: Evaluation Owner** (Evaluation Set & Metrics Owner) |
+| **Ngày hoàn thành** | 2026-08-06                                                       |
 
 ---
 
@@ -18,39 +17,41 @@
 
 ### Phần việc sở hữu
 
-| Module/deliverable | File/hàm phụ trách | Input nhận vào | Output bàn giao | Trạng thái |
-| :--- | :--- | :--- | :--- | :--- |
-| **Test Set Generator** | `src/evaluation/testset.py` (`build_test_set`) | `papers_clean.csv` (24 bài báo) | `data/eval/test_set.json` (72 câu hỏi) | Hoàn thành |
-| **Metrics Calculation** | `src/evaluation/metrics.py` (`evaluate_pipeline`) | `test_set.json` & RAG Agent | `baseline_metrics.json`, `corrupted_metrics.json`, `repaired_metrics.json` | Hoàn thành |
-| **QA Extraction Logic** | `src/retrieval/qa.py` (`_extract_answer`) | Question string & Top SearchResult | `AnswerResult` với câu trả lời trích xuất chuẩn | Hoàn thành |
-| **Evaluation Reports** | `report/role5_evaluation_report.md` | Kết quả chạy 3 mốc evaluation | Báo cáo tiến độ & đo lường tác động qua 7 CP | Hoàn thành |
+| Module/deliverable      | File/hàm phụ trách                                | Input nhận vào                     | Output bàn giao                                                            | Trạng thái |
+| :---------------------- | :------------------------------------------------ | :--------------------------------- | :------------------------------------------------------------------------- | :--------- |
+| **Test Set Generator**  | `src/evaluation/testset.py` (`build_test_set`)    | `papers_clean.csv` (24 bài báo)    | `data/eval/test_set.json` (72 câu hỏi)                                     | Hoàn thành |
+| **Metrics Calculation** | `src/evaluation/metrics.py` (`evaluate_pipeline`) | `test_set.json` & RAG Agent        | `baseline_metrics.json`, `corrupted_metrics.json`, `repaired_metrics.json` | Hoàn thành |
+| **QA Extraction Logic** | `src/retrieval/qa.py` (`_extract_answer`)         | Question string & Top SearchResult | `AnswerResult` với câu trả lời trích xuất chuẩn                            | Hoàn thành |
+| **Evaluation Reports**  | `report/role5_evaluation_report.md`               | Kết quả chạy 3 mốc evaluation      | Báo cáo tiến độ & đo lường tác động qua 7 CP                               | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 
-| Hoạt động | Thành viên/module được hỗ trợ | Kết quả |
-| :--- | :--- | :--- |
-| **Fix KeyError in QA** | Module Retrieval (`src/retrieval/qa.py`) | Thêm xử lý `metadata.get()` chống sập ứng dụng khi gặp dữ liệu bị rác/thiếu thông tin trong phase Corrupted. |
-| **Git Resolve Conflict** | Toàn nhóm (Main branch) | Xử lý xung đột nhị phân ChromaDB và file JSON kết quả, đẩy sạch sẽ toàn bộ code & metrics lên branch `main`. |
+| Hoạt động                | Thành viên/module được hỗ trợ            | Kết quả                                                                                                      |
+| :----------------------- | :--------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| **Fix KeyError in QA**   | Module Retrieval (`src/retrieval/qa.py`) | Thêm xử lý `metadata.get()` chống sập ứng dụng khi gặp dữ liệu bị rác/thiếu thông tin trong phase Corrupted. |
+| **Git Resolve Conflict** | Toàn nhóm (Main branch)                  | Xử lý xung đột nhị phân ChromaDB và file JSON kết quả, đẩy sạch sẽ toàn bộ code & metrics lên branch `main`. |
 
 ---
 
 ## 3. Kết quả theo vai trò
 
-| Nhiệm vụ đã thực hiện | File/hàm/artifact liên quan | Kết quả bàn giao | Cách xác minh |
-| :--- | :--- | :--- | :--- |
-| Sinh bộ câu hỏi kiểm thử chuẩn | `src/evaluation/testset.py` | 72 Q&A pairs thuộc 4 nhóm (`summary`, `authors`, `date`, `categories`) | View file `data/eval/test_set.json` |
-| Đánh giá Baseline Phase 1 | `src/evaluation/metrics.py` | `baseline_metrics.json` (Hit Rate: 1.0, Token F1: 0.7569) | `uv run python script/run_phase1.py` |
-| Đánh giá Corrupted Phase 2 | `src/evaluation/metrics.py` | `corrupted_metrics.json` (Hit Rate: 0.9167, Token F1: 0.6603) | `uv run python script/run_corruption_flow.py` |
-| Đánh giá Repaired Phase 3 | `src/evaluation/metrics.py` | `repaired_metrics.json` (Hit Rate: 1.0, Token F1: 0.7569) | View file `data/reports/corruption_report.md` |
+| Nhiệm vụ đã thực hiện          | File/hàm/artifact liên quan | Kết quả bàn giao                                                       | Cách xác minh                                 |
+| :----------------------------- | :-------------------------- | :--------------------------------------------------------------------- | :-------------------------------------------- |
+| Sinh bộ câu hỏi kiểm thử chuẩn | `src/evaluation/testset.py` | 72 Q&A pairs thuộc 4 nhóm (`summary`, `authors`, `date`, `categories`) | View file `data/eval/test_set.json`           |
+| Đánh giá Baseline Phase 1      | `src/evaluation/metrics.py` | `baseline_metrics.json` (Hit Rate: 1.0, Token F1: 0.7569)              | `uv run python script/run_phase1.py`          |
+| Đánh giá Corrupted Phase 2     | `src/evaluation/metrics.py` | `corrupted_metrics.json` (Hit Rate: 0.9167, Token F1: 0.6603)          | `uv run python script/run_corruption_flow.py` |
+| Đánh giá Repaired Phase 3      | `src/evaluation/metrics.py` | `repaired_metrics.json` (Hit Rate: 1.0, Token F1: 0.7569)              | View file `data/reports/corruption_report.md` |
 
 ---
 
 ## 4. Giải thích phần kỹ thuật đã thực hiện
 
 ### Vấn đề cần giải quyết
+
 Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có khả năng định lượng chính xác chất lượng truy xuất (Retrieval Accuracy) và chất lượng sinh câu trả lời (Answer Quality) của RAG Agent khi làm việc với 3 trạng thái dữ liệu: Sạch (Baseline) $\rightarrow$ Hỏng (Corrupted) $\rightarrow$ Khôi phục (Repaired).
 
 ### Cách triển khai
+
 1. **Thiết kế Test Set đa dạng 4 nhóm (`testset.py`):**
    - Đọc 24 bài báo từ `papers_clean.csv`, lọc bỏ các giá trị `nan`/rỗng.
    - Tự động sinh 72 câu hỏi (3 câu/bài báo) với 4 dạng: `summary` (tóm tắt nội dung), `authors` (tác giả), `date` (ngày xuất bản), `categories` (chuyên mục).
@@ -63,12 +64,12 @@ Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có
 
 ### Input, output và contract
 
-| Thành phần | Mô tả |
-| :--- | :--- |
-| **Input** | `data/clean/papers_clean.csv` (24 bài báo) & Vector Index (`ChromaDB`) |
-| **Output** | `data/eval/test_set.json` (72 Q&A) & `data/results/*_metrics.json` |
-| **Module phụ thuộc** | `src/ingestion/cleaning.py` (Cleaning Owner) & `src/retrieval/index.py` (RAG Owner) |
-| **Module sử dụng output** | `src/observability/reporting.py` (Observability Owner) |
+| Thành phần                  | Mô tả                                                                                                         |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| **Input**                   | `data/clean/papers_clean.csv` (24 bài báo) & Vector Index (`ChromaDB`)                                        |
+| **Output**                  | `data/eval/test_set.json` (72 Q&A) & `data/results/*_metrics.json`                                            |
+| **Module phụ thuộc**        | `src/ingestion/cleaning.py` (Cleaning Owner) & `src/retrieval/index.py` (RAG Owner)                           |
+| **Module sử dụng output**   | `src/observability/reporting.py` (Observability Owner)                                                        |
 | **Điều kiện lỗi cần xử lý** | Trường metadata trong Vector Store bị `None`/rỗng khi dữ liệu bị Corrupt. Xử lý bằng `metadata.get(key, "")`. |
 
 ### Cách xác minh
@@ -87,8 +88,8 @@ Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có
 
 - **Bối cảnh:** Khi đánh giá câu trả lời dạng tác giả, ngày xuất bản hoặc chuyên mục, hàm `_extract_answer()` mặc định chỉ lấy câu đầu tiên của đoạn summary, làm cho Token F1 ở các câu hỏi thông tin ngắn bị thấp bất hợp lý (~0.42).
 - **Các phương án đã cân nhắc:**
-  1. *Phương án A:* Giữ nguyên logic cũ chỉ lấy `first_sentence(summary)` cho mọi dạng câu hỏi.
-  2. *Phương án B (Đã chọn):* Mở rộng điều kiện khớp ngữ nghĩa trong `_extract_answer()` để trích xuất trực tiếp các trường metadata tương ứng (`authors_joined`, `published`, `categories_joined`).
+  1. _Phương án A:_ Giữ nguyên logic cũ chỉ lấy `first_sentence(summary)` cho mọi dạng câu hỏi.
+  2. _Phương án B (Đã chọn):_ Mở rộng điều kiện khớp ngữ nghĩa trong `_extract_answer()` để trích xuất trực tiếp các trường metadata tương ứng (`authors_joined`, `published`, `categories_joined`).
 - **Lý do chọn:** Phương án B phản ánh đúng khả năng trích xuất thông tin thực tế của RAG Agent, đưa Token F1 của Baseline từ 0.4236 lên mức 0.7569 (75.69%), giúp phát hiện sự sụt giảm F1 khi dữ liệu bị rác rõ ràng hơn.
 - **Bằng chứng:** Token F1 baseline tăng từ 42.36% lên 75.69%, và khi bị cấy rác F1 giảm xuống 66.03% (đo được mức sụt giảm 9.66%).
 
@@ -118,8 +119,8 @@ Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có
 2. **Role của Evaluation set & Ground-truth document IDs:**
    Test set chứa 72 câu hỏi đi kèm `ground_truth_doc_ids` (DOI chuẩn). RAG Agent thực hiện Semantic Search lấy Top-$K$ tài liệu; nếu DOI chuẩn xuất hiện trong Top-$K$, `retrieval_hit` = True.
 3. **Quality checks vs Freshness monitoring:**
-   - *Quality checks:* Kiểm tra tính toàn vẹn cấu trúc dữ liệu tại chỗ (dữ liệu rỗng, trùng lặp ID, thiếu trường).
-   - *Freshness monitoring:* Theo dõi thời gian biến động của dữ liệu theo chu kỳ thời gian (ví dụ: phát hiện bài báo quá 180 ngày chưa cập nhật).
+   - _Quality checks:_ Kiểm tra tính toàn vẹn cấu trúc dữ liệu tại chỗ (dữ liệu rỗng, trùng lặp ID, thiếu trường).
+   - _Freshness monitoring:_ Theo dõi thời gian biến động của dữ liệu theo chu kỳ thời gian (ví dụ: phát hiện bài báo quá 180 ngày chưa cập nhật).
 4. **Vì sao dùng chung 1 test set cho cả 3 mốc?**
    Đảm bảo nguyên tắc "Cố định biến phụ thuộc" (Controlled Experiment). Việc giữ nguyên 72 câu hỏi giúp các chỉ số so sánh (Hit Rate, F1) giữa Baseline, Corrupted và Repaired mang tính khoa học và minh bạch 100%.
 5. **Dấu hiệu chứng minh Repair thành công:**
@@ -131,14 +132,14 @@ Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có
 
 ### Metrics chính
 
-| Metric/signal | Baseline | Corrupted | Repaired | Nhận xét của cá nhân |
-| :--- | ---: | ---: | ---: | :--- |
-| **`retrieval_hit_rate`** | **1.0 (100%)** | **0.9167 (91.67%)** | **1.0 (100%)** | Dữ liệu lỗi xóa bài mới nhất làm Hit Rate giảm 8.33%. Sửa xong phục hồi 100%. |
-| **`mean_token_f1`** | **0.7569 (75.69%)** | **0.6603 (66.03%)** | **0.7569 (75.69%)** | Dữ liệu rác/bị xóa làm suy giảm 9.66% độ trùng khớp ngữ nghĩa. Sửa xong phục hồi 100%. |
-| **`judge_accuracy`** | **0.6667 (66.67%)** | **0.6250 (62.50%)** | **0.6806 (68.06%)** | Độ chính xác của Heuristic Judge sụt giảm khi dữ liệu hỏng. |
-| **`mean_judge_score`** | **3.958 / 5.0** | **3.778 / 5.0** | **3.958 / 5.0** | Điểm đánh giá trung bình giảm 0.18 điểm khi bị cấy rác. |
-| **Quality checks** | **Pass (True)** | **Fail (False)** | **Pass (True)** | Nhận diện chính xác 2 dòng trùng lặp và 2 summary rỗng ở phase Corrupted. |
-| **Freshness status** | **False (1 stale)** | **False (3 stale)** | **False (1 stale)** | Phát hiện thêm 2 bài báo bị đẩy lùi ngày xuất bản 10 năm ở phase Corrupted. |
+| Metric/signal            |            Baseline |           Corrupted |            Repaired | Nhận xét của cá nhân                                                                   |
+| :----------------------- | ------------------: | ------------------: | ------------------: | :------------------------------------------------------------------------------------- |
+| **`retrieval_hit_rate`** |      **1.0 (100%)** | **0.9167 (91.67%)** |      **1.0 (100%)** | Dữ liệu lỗi xóa bài mới nhất làm Hit Rate giảm 8.33%. Sửa xong phục hồi 100%.          |
+| **`mean_token_f1`**      | **0.7569 (75.69%)** | **0.6603 (66.03%)** | **0.7569 (75.69%)** | Dữ liệu rác/bị xóa làm suy giảm 9.66% độ trùng khớp ngữ nghĩa. Sửa xong phục hồi 100%. |
+| **`judge_accuracy`**     | **0.6667 (66.67%)** | **0.6250 (62.50%)** | **0.6806 (68.06%)** | Độ chính xác của Heuristic Judge sụt giảm khi dữ liệu hỏng.                            |
+| **`mean_judge_score`**   |     **3.958 / 5.0** |     **3.778 / 5.0** |     **3.958 / 5.0** | Điểm đánh giá trung bình giảm 0.18 điểm khi bị cấy rác.                                |
+| **Quality checks**       |     **Pass (True)** |    **Fail (False)** |     **Pass (True)** | Nhận diện chính xác 2 dòng trùng lặp và 2 summary rỗng ở phase Corrupted.              |
+| **Freshness status**     | **False (1 stale)** | **False (3 stale)** | **False (1 stale)** | Phát hiện thêm 2 bài báo bị đẩy lùi ngày xuất bản 10 năm ở phase Corrupted.            |
 
 ### Kết luận từ số liệu
 
@@ -153,11 +154,13 @@ Xây dựng một bộ đánh giá tự động (Automated Evaluation Suite) có
 ## 9. Điều học được và hướng cải thiện
 
 ### Ba điều quan trọng nhất
+
 1. **Về Data Pipeline:** Thấy rõ tầm quan trọng của việc duy trì Snapshot Nguồn Thô (Single Source of Truth) để phục vụ cho việc khôi phục dữ liệu (Data Recovery) khi gặp sự cố.
 2. **Về Data Quality & Observability:** Data Observability không chỉ dừng ở việc "báo lỗi" mà phải là kim chỉ nam để giải thích lý do vì sao mô hình AI/RAG lại hoạt động kém.
 3. **Về ảnh hưởng của Data đến RAG Agent:** "Garbage in, Garbage out" — Dữ liệu chỉ cần rác 10% đã làm suy giảm đáng kể độ tin cậy và chính xác của AI Agent.
 
 ### Nếu có thêm thời gian
+
 Tích hợp LLM Judge thực sự (sử dụng GPT-4o hoặc Claude 3.5 API) thay cho Heuristic Fallback Judge để đánh giá thêm độ tiệm cận về mặt lập luận (Faithfulness & Answer Relevance).
 
 ---
