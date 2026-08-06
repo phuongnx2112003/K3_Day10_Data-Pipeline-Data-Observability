@@ -12,7 +12,7 @@
 ## Metrics
 - Retrieval hit rate: 1.0
 - Mean token F1: 0.7569240806733034
-- Judge accuracy: 0.6666666666666666
+- Judge accuracy: 0.6805555555555556
 - Mean judge score: 3.9583333333333335
 - Ragas: {'skipped': 'Set RUN_RAGAS=1 to enable the slower Ragas pass.'}
 

@@ -83,7 +83,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer provides a date that is incorrect compared to the reference answer. While it is close, it is not the same date, which is critical for correctness."
+      "reasoning": "The model answer provides a date that is incorrect compared to the reference answer. While it is close, it is not the same date, which is critical for accuracy."
     }
   },
   {
@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer accurately summarizes the main findings of the paper, including the shift towards autonomous agentic architectures, the bibliometric analysis of publications, the rise in citations, key themes, geographical distribution of research, application domains, and challenges in the field. It captures the essence of the reference answer comprehensively."
+      "reasoning": "The model answer accurately summarizes the main findings of the paper, highlighting the shift towards autonomous agentic architectures, the bibliometric analysis of publications, the rise in research output and citations, key themes, geographical distribution, application domains, and challenges in the field. It captures the essence of the reference answer comprehensively."
     }
   },
   {
@@ -197,7 +197,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer only provides the introductory sentence of the reference answer and fails to summarize the main findings, methodology, and results of the study. It lacks critical details about the JADE-Plus framework, its performance metrics, and comparisons with other models."
+      "reasoning": "The model answer only provides the introductory sentence of the reference answer and fails to summarize the main findings, methodology, and results of the study, which are crucial for a complete understanding of the paper."
     }
   },
   {
@@ -224,7 +224,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer matches the reference answer exactly, providing all authors' names correctly."
+      "reasoning": "The model answer matches the reference answer exactly, providing all the authors' names correctly."
     }
   },
   {
@@ -278,7 +278,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only partially captures the essence of the reference answer. It provides a general overview of the US Army Corps of Engineers' mission but fails to mention the specific focus areas and the context of the R&D programs, which are crucial for understanding the main findings of the paper."
+      "reasoning": "The model answer only partially addresses the question by repeating the first part of the reference answer without summarizing the main findings of the paper. It lacks details about the specific focus areas and the role of the US Army Engineer Research and Development Center (ERDC) in relation to the hackathon and the development of the retrieval-augmented generation large language model."
     }
   },
   {
@@ -361,7 +361,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only provides a partial summary of the paper, failing to mention the specific framework (CM-RAF-Lag-Llama), the comparative analysis of forecasts, the results regarding MSE reductions, and the significance of retrieval in enhancing forecasting accuracy. It lacks critical details that are essential for a complete understanding of the main findings."
+      "reasoning": "The model answer only provides a partial summary of the paper, failing to mention the specific framework (CM-RAF-Lag-Llama), the validation results, and the significant findings regarding MSE reductions across different configurations. It lacks detail on the experiments conducted and the implications of the results, which are crucial for a complete understanding of the paper's main findings."
     }
   },
   {
@@ -535,7 +535,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only partially addresses the main finding of the paper by mentioning the issue of fragmented access to MUI fatwa documents, but it fails to include the key developments, methodologies, and results of the research, such as the hybrid architecture, the use of multiple knowledge sources, and the improvements in answer relevance and accuracy."
+      "reasoning": "The model answer only partially addresses the main finding of the paper by mentioning the issue of fragmented access to MUI fatwa documents, but it fails to include the key developments and results of the research, such as the hybrid architecture, the use of multiple knowledge sources, and the improvements in answer relevance and accuracy."
     }
   },
   {
@@ -883,7 +883,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer only provides a partial summary of the paper, failing to include the main findings, methodologies, and contributions outlined in the reference answer. It lacks critical details about the integrated governance architecture and the specific frameworks and assessments used, which are essential for a complete understanding of the paper's contributions."
+      "reasoning": "The model answer only provides a brief introduction to the topic without summarizing the main findings or contributions of the paper. It lacks details about the proposed governance architecture, methodologies, and specific components discussed in the reference answer."
     }
   },
   {
@@ -970,7 +970,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer only provides a very brief introduction to the topic of large language models and does not summarize the main findings or contributions of the paper. It lacks critical details about the evaluation of reliability gaps, the dimensions of analysis, and the implications of the research, which are essential to understanding the paper's main findings."
+      "reasoning": "The model answer only provides a very brief introduction to the topic of large language models and does not summarize the main findings or key points of the paper. It lacks the depth and detail present in the reference answer, which outlines the framework, dimensions of evaluation, and specific findings related to reliability gaps."
     }
   },
   {
@@ -1143,8 +1143,8 @@
     "token_f1": 0.017777777777777778,
     "judge": {
       "score": 4,
-      "correct": true,
-      "reasoning": "The model answer captures the essence of the paper's findings, including the adaptation of LLMs for low-resource domains and the effectiveness of fine-tuning and RAG techniques. However, it lacks specific details and metrics that would enhance its completeness, such as the performance scores and the implications for financial inclusion."
+      "correct": false,
+      "reasoning": "The model answer starts with 'Background' but does not provide a complete summary of the paper's findings or contributions. It lacks details on the methods, results, and implications discussed in the reference answer, which are crucial for a comprehensive understanding."
     }
   },
   {
@@ -1260,7 +1260,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer correctly identifies the author of the paper as Sohail Khan, which matches the reference answer exactly."
+      "reasoning": "The model answer correctly identifies the author of the paper as Sohail Khan, which matches the reference answer."
     }
   },
   {
@@ -1318,7 +1318,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only provides a partial summary of the paper, focusing solely on the introduction without addressing the methods, results, or conclusion. It lacks critical details about the evaluation of models, performance metrics, and the significance of the findings, which are essential for a comprehensive understanding of the paper's main findings."
+      "reasoning": "The model answer only provides a partial summary of the paper, focusing solely on the introduction without addressing the methods, results, or conclusion. It lacks critical details about the evaluation of the models, the performance metrics, and the overall findings of the study, which are essential for a complete understanding of the paper's main findings."
     }
   },
   {
@@ -1376,7 +1376,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer matches the reference answer exactly, indicating it is materially correct."
+      "reasoning": "The model answer matches the reference answer exactly, providing the correct publication date."
     }
   },
   {
@@ -1405,7 +1405,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer only provides a very brief introduction to the topic of mental health conditions and does not summarize the main findings or contributions of the paper. It lacks details about the study's focus on agentic retrieval augmented generation, the methodology, and the implications of the findings, which are crucial for a comprehensive summary."
+      "reasoning": "The model answer only provides a very brief introduction about mental health conditions and does not summarize the main findings or contributions of the paper. It lacks details about the study's focus on agentic retrieval augmented generation, the evaluation of mental health models, and the implications of the findings."
     }
   },
   {
@@ -1492,7 +1492,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only addresses the initial focus of the paper on high inference latency and computation cost, but it fails to summarize the key components of the proposed speculative RAG framework, the retrieval mechanisms used, and the empirical results. It lacks detail on the methods and findings that are critical to understanding the paper's contributions."
+      "reasoning": "The model answer only addresses the initial focus of the paper on high inference latency and computation cost, but it fails to summarize the key components of the proposed speculative RAG framework, the retrieval mechanisms used, and the empirical results that demonstrate improvements. It lacks detail and does not capture the essence of the findings."
     }
   },
   {
@@ -1579,7 +1579,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer only provides a very brief summary of the study's focus on retrieval-augmented mechanisms without addressing the key findings, methodology, or implications discussed in the reference answer. It lacks detail on how the approach improves upon traditional models and does not mention the framework components or experimental results."
+      "reasoning": "The model answer only provides a very brief summary of the study's focus on retrieval-augmented mechanisms without addressing the key findings, methodology, or implications discussed in the reference answer. It lacks detail on how the approach improves literature review generation and does not mention the framework components or experimental results."
     }
   },
   {
@@ -1637,7 +1637,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer provides an incorrect publication date, which is ten years earlier than the reference answer."
+      "reasoning": "The model answer provides an incorrect publication date, stating 2016-04-07 instead of the correct date 2026-04-07."
     }
   },
   {
@@ -1666,7 +1666,7 @@
     "judge": {
       "score": 2,
       "correct": false,
-      "reasoning": "The model answer captures the initial context about LLMs and their limitations but fails to address the main findings of the paper, such as the role of Retrieval-Augmented Generation (RAG), the survey of methodologies, ethical concerns, and future directions. It lacks the comprehensive summary provided in the reference answer."
+      "reasoning": "The model answer captures the initial context about LLMs and their limitations but fails to address the main findings of the paper, such as the role of Retrieval-Augmented Generation (RAG), the evolution of RAG methodologies, and the discussion of ethical concerns and future directions. It lacks the comprehensive summary provided in the reference answer."
     }
   },
   {
@@ -1695,7 +1695,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer correctly identifies the author of the paper as Eason Ni, which matches the reference answer."
+      "reasoning": "The model answer correctly identifies Eason Ni as the author of the paper, matching the reference answer exactly."
     }
   },
   {
@@ -1898,7 +1898,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer provides an incorrect publication date, which is ten years earlier than the reference answer."
+      "reasoning": "The model answer provides an incorrect publication date, which is 10 years earlier than the reference answer."
     }
   },
   {
@@ -1927,7 +1927,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer only states the demand for CDSS without addressing the main findings or contributions of the paper, such as the introduction of ECRAG-LLM, its features, and the results of the experiments."
+      "reasoning": "The model answer only provides the initial context about the demand for Clinical Decision Support Systems (CDSS) but fails to summarize the main findings or contributions of the paper, such as the introduction of ECRAG-LLM, its features, and the results of the experiments."
     }
   },
   {
