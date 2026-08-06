@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from ingestion.cleaning import build_text_for_embedding
+from ingestion.cleaning import TARGET_CLEAN_COLUMNS, build_text_for_embedding
 
 
 def _selected_indices(df: pd.DataFrame, count: int, offset: int = 0) -> list[int]:
@@ -21,16 +21,7 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
     The baseline dataframe is never mutated. Selection is deterministic so the
     baseline/corrupted/repaired comparison can be reproduced at CP1 and later.
     """
-    required = {
-        "paper_id",
-        "title",
-        "summary",
-        "published",
-        "age_days",
-        "authors_joined",
-        "categories_joined",
-        "text_for_embedding",
-    }
+    required = set(TARGET_CLEAN_COLUMNS)
     missing = sorted(required.difference(df.columns))
     if missing:
         raise ValueError(f"Clean dataframe is missing required columns: {missing}")
@@ -72,9 +63,13 @@ def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path) -> pd.DataFrame:
         dates = pd.to_datetime(corrupted.loc[stale_indices, "published"], errors="coerce")
         stale_dates = dates - pd.DateOffset(years=10)
         corrupted.loc[stale_indices, "published"] = stale_dates.dt.strftime("%Y-%m-%d")
-        corrupted.loc[stale_indices, "age_days"] = (
-            pd.to_numeric(corrupted.loc[stale_indices, "age_days"], errors="coerce").fillna(0).astype(int) + 3652
-        )
+        if "age_days" in corrupted.columns:
+            corrupted.loc[stale_indices, "age_days"] = (
+                pd.to_numeric(corrupted.loc[stale_indices, "age_days"], errors="coerce")
+                .fillna(0)
+                .astype(int)
+                + 3652
+            )
         events.append({"type": "stale_published", "paper_ids": corrupted.loc[stale_indices, "paper_id"].tolist()})
 
     # Rebuild derived fields after all source-field corruptions.
