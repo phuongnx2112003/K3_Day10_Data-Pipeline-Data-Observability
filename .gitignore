@@ -1,7 +1,9 @@
 solution/
 .env
+Agent.md
 lab.txt
 .venv/
 src/*.egg-info/
 lab/
 **/__pycache__/
+Agents.md
