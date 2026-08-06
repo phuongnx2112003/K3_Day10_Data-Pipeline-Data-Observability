@@ -1,6 +1,7 @@
 {
   "report_name": "repaired_quality",
-  "generated_at": "2026-08-06T05:27:50.523713Z",
+  "generated_at": "2026-08-06T05:33:23.340978Z",
+  "generated_at_utc": "2026-08-06T05:33:23.340978+00:00",
   "total_rows": 24,
   "required_columns": [
     "paper_id",
@@ -13,7 +14,14 @@
     "categories_joined"
   ],
   "missing_columns": [],
+  "summary_min_chars": 50,
+  "freshness_threshold_days": 180,
   "overall_pass": true,
+  "success": false,
+  "passed_checks": 8,
+  "failed_checks": [
+    "age_days_within_freshness_threshold"
+  ],
   "checks": {
     "required_columns_present": true,
     "row_count_positive": true,
@@ -23,10 +31,67 @@
     "published_valid": true,
     "age_days_valid": true,
     "text_for_embedding_not_blank": true,
+    "summary_min_length": true,
     "summary_present_ratio": 1.0,
     "text_for_embedding_present_ratio": 1.0,
     "fresh_rows_ratio": 0.9583
   },
+  "check_results": [
+    {
+      "name": "row_count_positive",
+      "success": true,
+      "observed": 24,
+      "expected": "> 0"
+    },
+    {
+      "name": "required_columns_present",
+      "success": true,
+      "observed": 0,
+      "expected": "0 missing columns"
+    },
+    {
+      "name": "paper_id_not_null",
+      "success": true,
+      "observed": 0,
+      "expected": "0 invalid rows"
+    },
+    {
+      "name": "paper_id_unique",
+      "success": true,
+      "observed": 0,
+      "expected": "0 duplicate rows"
+    },
+    {
+      "name": "title_not_null",
+      "success": true,
+      "observed": 0,
+      "expected": "0 invalid rows"
+    },
+    {
+      "name": "summary_min_length",
+      "success": true,
+      "observed": 0,
+      "expected": "0 rows shorter than 50 characters"
+    },
+    {
+      "name": "published_parseable",
+      "success": true,
+      "observed": 0,
+      "expected": "0 invalid rows"
+    },
+    {
+      "name": "age_days_valid",
+      "success": true,
+      "observed": 0,
+      "expected": "0 null, non-numeric, or negative rows"
+    },
+    {
+      "name": "age_days_within_freshness_threshold",
+      "success": false,
+      "observed": 1,
+      "expected": "0 rows older than 180 days"
+    }
+  ],
   "counts": {
     "blank_paper_id": 0,
     "duplicate_paper_id": 0,
