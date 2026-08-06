@@ -7,7 +7,7 @@
 | Họ và tên       | Nguyễn Đào Nam Hải             |
 | MSSV               | 2A202601037                     |
 | Khóa/Lớp         | K3              |
-| Tên nhóm         | K3_Day10_Data-Pipeline-Data-Observability     |
+| Tên nhóm         | 2k345     |
 | Vai trò chính    | Vai trò 4 (RAG & Agent Owner)                 |
 | Repository         | https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability |
 | Ngày hoàn thành | 2026-08-06               |
@@ -157,4 +157,5 @@ Nếu có thêm thời gian, tôi sẽ triển khai Hybrid Search (kết hợp B
 - [x] Báo cáo này không phải bản sao nguyên văn của báo cáo nhóm hoặc báo cáo thành viên khác.
 
 **Họ và tên:** Nguyễn Đào Nam Hải
+
 **Ngày xác nhận:** 2026-08-06
