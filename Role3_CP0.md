@@ -89,3 +89,37 @@ python -c "from ingestion.cleaning import run_raw_to_clean; run_raw_to_clean()"
 Kiểm tra artifact xác nhận đủ 24 dòng, `paper_id` duy nhất, ba trường cốt lõi
 không rỗng, Unicode được giữ nguyên, và output chỉ có đúng 9 cột target. Bộ test
 tự động tiếp tục đạt `3 passed`.
+
+## CP2 - Xác minh toàn vẹn, test set và schema contract
+
+Đã kiểm tra cả `data/clean/cleaned_records.json` và
+`data/clean/papers_clean.csv`:
+
+- Mỗi artifact có 24 records.
+- `text_for_embedding` rỗng/null: 0.
+- `paper_id` trùng lặp sau khi trim và so sánh không phân biệt hoa thường: 0.
+- `paper_id`, `title`, `published` rỗng: 0.
+- Đủ toàn bộ 9 field mà `LocalEmbeddingIndex` sử dụng.
+- Dry-run chuyển đổi sang document/metadata của index thành công cho 24/24 rows.
+
+Đã rà soát toàn bộ `data/eval/test_set.json`, không chỉ một sample:
+
+- Tổng số câu hỏi: 72; test ID duy nhất: 72.
+- Số paper được tham chiếu: 24/24.
+- Phân bố: 24 summary, 24 authors, 24 date. Không có câu categories vì nguồn
+  Crossref hiện có `categories_joined` rỗng; builder đã đúng khi không tạo
+  ground truth giả.
+- Mọi `ground_truth_doc_ids` đều tồn tại trong clean corpus.
+- Mọi ground truth đều khớp chính xác field nguồn tương ứng.
+- Không có question/ground truth rỗng, `nan`, `none`, `null` hoặc ký tự null.
+- Title trong từng question khớp với title của row được tham chiếu.
+
+Script `script/test_rag_config.py` xác nhận clean dataframe đủ field và toàn bộ
+embedding text hợp lệ. Vì không có lỗi thiếu field ở index hoặc test set nên
+schema contract 9 cột được giữ nguyên, không thêm field giả hay thay đổi giao
+tiếp giữa các vai trò.
+
+Việc import full package `retrieval` trong môi trường hiện tại báo thiếu thư viện
+`langchain`. Đây là dependency môi trường, không phải lỗi thiếu field trong dữ
+liệu. Contract index đã được kiểm tra bằng đúng phép dựng document/metadata mà
+`LocalEmbeddingIndex` sử dụng, không gọi model hoặc tải embedding.
