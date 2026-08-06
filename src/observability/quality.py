@@ -258,6 +258,7 @@ def audit_embedding_manifest(
     settings: Settings,
     manifest_path,
     report_path,
+    expected_collection_name: str | None = None,
 ) -> dict[str, Any]:
     """Audit the embedding manifest against clean data and configured index paths."""
     manifest_file = Path(manifest_path)
@@ -305,6 +306,12 @@ def audit_embedding_manifest(
     manifest_persist_path = Path(manifest_persist_raw).resolve() if manifest_persist_raw else None
     manifest_path_matches_config = manifest_persist_path == configured_persist_path
 
+    expected_collection = expected_collection_name or settings.baseline_collection_name
+    collection_check_name = (
+        "collection_name_matches_expected"
+        if expected_collection_name
+        else "collection_name_matches_baseline_config"
+    )
     checks = [
         _check("manifest_file_exists", 1, "1 existing file", True),
         _check("backend_is_chroma", int(manifest.get("backend") == "chroma"), "1", manifest.get("backend") == "chroma"),
@@ -315,10 +322,10 @@ def audit_embedding_manifest(
             manifest.get("embedding_model") == settings.embedding_model,
         ),
         _check(
-            "collection_name_matches_baseline_config",
-            int(manifest.get("collection_name") == settings.baseline_collection_name),
+            collection_check_name,
+            int(manifest.get("collection_name") == expected_collection),
             "1",
-            manifest.get("collection_name") == settings.baseline_collection_name,
+            manifest.get("collection_name") == expected_collection,
         ),
         _check(
             "document_count_matches_clean_rows",
@@ -360,6 +367,7 @@ def audit_embedding_manifest(
         "backend": manifest.get("backend"),
         "embedding_model": manifest.get("embedding_model"),
         "collection_name": manifest.get("collection_name"),
+        "expected_collection_name": expected_collection,
         "document_count": document_count,
         "clean_row_count": clean_count,
         "manifest_persist_path": manifest_persist_raw or None,

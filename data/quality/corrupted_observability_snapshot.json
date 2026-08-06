@@ -1,0 +1,43 @@
+{
+  "state": "corrupted",
+  "generated_at_utc": "2026-08-06T05:21:43.910080+00:00",
+  "signals": {
+    "row_count": 24,
+    "null_paper_id_rows": 0,
+    "duplicate_paper_id_rows": 4,
+    "missing_title_rows": 0,
+    "invalid_summary_rows": 2,
+    "invalid_age_days_rows": 0,
+    "stale_rows": 3,
+    "stale_ratio": 0.125,
+    "latest_published": "2026-07-13",
+    "oldest_published": "2016-02-26",
+    "embedding_document_count": 24,
+    "embedding_collection_name": "papers-corrupted"
+  },
+  "status": {
+    "quality_success": false,
+    "freshness_is_fresh": false,
+    "embedding_audit_success": false
+  },
+  "failed_checks": {
+    "quality": [
+      "paper_id_unique",
+      "summary_min_length",
+      "age_days_within_freshness_threshold"
+    ],
+    "embedding": [
+      "paper_id_unique",
+      "required_metadata_present",
+      "persist_path_matches_config"
+    ]
+  },
+  "metrics": {
+    "samples": 72,
+    "retrieval_hit_rate": 0.9166666666666666,
+    "mean_token_f1": 0.660252909856381,
+    "judge_accuracy": 0.625,
+    "mean_judge_score": 3.7777777777777777
+  },
+  "answers_count": 72
+}

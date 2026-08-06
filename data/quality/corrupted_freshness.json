@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-08-06T05:21:43.905903Z",
+  "generated_at_utc": "2026-08-06T05:21:43.905903+00:00",
+  "source_timestamp_column": "published",
+  "age_column": "age_days",
+  "threshold_days": 180,
+  "freshness_threshold_days": 180,
+  "latest_published": "2026-07-13",
+  "oldest_published": "2016-02-26",
+  "stale_rows": 3,
+  "fresh_rows": 21,
+  "total_rows": 24,
+  "stale_ratio": 0.125,
+  "invalid_timestamp_rows": 0,
+  "invalid_age_days_rows": 0,
+  "is_fresh": false
+}

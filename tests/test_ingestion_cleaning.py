@@ -84,22 +84,31 @@ def test_cp1_corruption_rebuilds_embedding_text_and_logs(tmp_path) -> None:
     )
     log_path = tmp_path / "corruption_log.json"
 
+    baseline = clean.copy(deep=True)
     corrupted = corrupt_clean_dataframe(clean, log_path)
     log = json.loads(log_path.read_text(encoding="utf-8"))
 
+    assert clean.equals(baseline)
+    repeated = corrupt_clean_dataframe(clean, tmp_path / "repeated_log.json")
+    assert corrupted.equals(repeated)
+    assert log["seed"] == 42
     assert corrupted["paper_id"].duplicated().any()
     assert corrupted.apply(
         lambda row: row["text_for_embedding"].startswith(f"Title: {row['title']}\nSummary: {row['summary']}"),
         axis=1,
     ).all()
     assert {event["type"] for event in log["events"]} == {
-        "drop_latest",
-        "blank_summary",
-        "summary_noise",
+        "latest_drop",
+        "missing",
+        "noise",
         "truncate_title",
-        "stale_published",
-        "duplicate_rows",
+        "old_date",
+        "duplicate",
     }
+    assert all(
+        {"record_ids", "type", "parameters", "before_count", "after_count"}.issubset(event)
+        for event in log["events"]
+    )
 
 
 def test_cp0_json_file_to_clean_outputs(tmp_path, capsys) -> None:
