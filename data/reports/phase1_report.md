@@ -20,9 +20,9 @@
 | --- | ---: |
 | `samples` | 72 |
 | `retrieval_hit_rate` | 1.0000 |
-| `mean_token_f1` | 0.4236 |
-| `judge_accuracy` | 0.3333 |
-| `mean_judge_score` | 2.6250 |
+| `mean_token_f1` | 0.7569 |
+| `judge_accuracy` | 0.6806 |
+| `mean_judge_score` | 3.9583 |
 
 Ragas: Skipped: Set RUN_RAGAS=1 to enable the slower Ragas pass.
 

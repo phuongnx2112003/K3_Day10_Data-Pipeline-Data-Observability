@@ -1,7 +1,7 @@
 {
   "report_name": "corrupted_quality",
-  "generated_at": "2026-08-06T05:21:43.903998Z",
-  "generated_at_utc": "2026-08-06T05:21:43.903998+00:00",
+  "generated_at": "2026-08-06T05:33:22.578954Z",
+  "generated_at_utc": "2026-08-06T05:33:22.578954+00:00",
   "total_rows": 24,
   "required_columns": [
     "paper_id",

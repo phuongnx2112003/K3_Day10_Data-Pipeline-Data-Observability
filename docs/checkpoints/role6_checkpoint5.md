@@ -60,14 +60,14 @@ rồi thêm hai duplicate records, nên tổng số dòng vẫn là 24.
 | Metric | Baseline | Corrupted | Delta | Quan sát |
 | --- | ---: | ---: | ---: | --- |
 | Retrieval hit rate | 1.0000 | 0.9167 | -0.0833 | Giảm |
-| Mean token F1 | 0.4236 | 0.6603 | +0.2367 | Tăng |
-| Judge accuracy | 0.3333 | 0.6250 | +0.2917 | Tăng |
-| Mean judge score | 2.6250 | 3.7778 | +1.1528 | Tăng |
+| Mean token F1 | 0.7569 | 0.6603 | -0.0967 | Giảm |
+| Judge accuracy | 0.6806 | 0.6250 | -0.0556 | Giảm |
+| Mean judge score | 3.9583 | 3.7778 | -0.1806 | Giảm |
 
-Kết luận có kiểm soát: structural quality, freshness và retrieval hit rate xấu đi.
-Token F1 cùng judge metrics lại tăng trên lần chạy này, vì vậy không được kết luận
-rằng mọi RAG metric đều giảm. Metric tăng cũng không phủ định các lỗi dữ liệu đã được
-quality/freshness report đo trực tiếp.
+Kết luận có kiểm soát: structural quality, freshness và cả bốn RAG metrics đều xấu
+đi trên bộ artifact mới nhất. Mức giảm chỉ được báo cáo cho toàn corrupted dataset;
+không quy riêng Token F1 hoặc judge metrics cho một corruption event khi chưa có phép
+thử cô lập event đó.
 
 ## 5. Nối corruption log với bằng chứng
 

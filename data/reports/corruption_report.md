@@ -22,9 +22,9 @@ Overall recovery status: **PARTIAL**
 | Metric | Baseline | Corrupted | Repaired | Repaired − baseline | Recovery outcome |
 | --- | ---: | ---: | ---: | ---: | --- |
 | `retrieval_hit_rate` | 1.0000 | 0.9167 | 1.0000 | 0.0000 | restored_to_baseline |
-| `mean_token_f1` | 0.4236 | 0.6603 | 0.4236 | 0.0000 | restored_to_baseline |
-| `judge_accuracy` | 0.3333 | 0.6250 | 0.3472 | 0.0139 | above_baseline |
-| `mean_judge_score` | 2.6250 | 3.7778 | 2.3611 | -0.2639 | below_baseline |
+| `mean_token_f1` | 0.7569 | 0.6603 | 0.7569 | 0.0000 | restored_to_baseline |
+| `judge_accuracy` | 0.6806 | 0.6250 | 0.6667 | -0.0139 | below_baseline |
+| `mean_judge_score` | 3.9583 | 3.7778 | 3.9583 | 0.0000 | restored_to_baseline |
 
 ## Status comparison
 
@@ -37,13 +37,13 @@ Overall recovery status: **PARTIAL**
 ## Evidence-based conclusions
 
 - Structural quality and measured freshness signals returned to their baseline values.
-- Retrieval hit rate and mean token F1 returned exactly to baseline.
-- Judge accuracy is above baseline, but mean judge score remains below baseline.
+- Metrics restored exactly to baseline: retrieval_hit_rate, mean_token_f1, mean_judge_score.
+- Metrics still below baseline: judge_accuracy.
 - Overall recovery is partial because at least one metric or audit signal remains unresolved.
 
 ## Limits of the conclusion
 
-- Metrics still below baseline: mean_judge_score.
+- Metrics still below baseline: judge_accuracy.
 - Repaired freshness is still FAIL because one source record is older than the 180-day threshold; this matches the baseline condition.
 - Repaired embedding audit is not PASS: persist_path_matches_config.
 - Ragas was skipped, so no Ragas-based recovery claim is made.

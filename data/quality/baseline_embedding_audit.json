@@ -1,9 +1,10 @@
 {
-  "generated_at_utc": "2026-08-06T04:58:09.115140+00:00",
+  "generated_at_utc": "2026-08-06T05:31:02.549111+00:00",
   "manifest_path": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings.json",
   "backend": "chroma",
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
   "collection_name": "papers-baseline",
+  "expected_collection_name": "papers-baseline",
   "document_count": 24,
   "clean_row_count": 24,
   "manifest_persist_path": "D:\\Vin\\Lab\\B10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",

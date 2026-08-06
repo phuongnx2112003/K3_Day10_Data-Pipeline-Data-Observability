@@ -1,7 +1,7 @@
 {
   "report_name": "baseline_quality",
-  "generated_at": "2026-08-06T04:58:09.079628Z",
-  "generated_at_utc": "2026-08-06T04:58:09.079628+00:00",
+  "generated_at": "2026-08-06T05:31:02.544571Z",
+  "generated_at_utc": "2026-08-06T05:31:02.544571+00:00",
   "total_rows": 24,
   "required_columns": [
     "paper_id",

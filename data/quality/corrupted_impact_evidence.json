@@ -59,22 +59,22 @@
       "direction": "decrease"
     },
     "mean_token_f1": {
-      "baseline": 0.4235907473399701,
+      "baseline": 0.7569240806733034,
       "corrupted": 0.660252909856381,
-      "delta": 0.23666216251641087,
-      "direction": "increase"
+      "delta": -0.09667117081692245,
+      "direction": "decrease"
     },
     "judge_accuracy": {
-      "baseline": 0.3333333333333333,
+      "baseline": 0.6805555555555556,
       "corrupted": 0.625,
-      "delta": 0.2916666666666667,
-      "direction": "increase"
+      "delta": -0.05555555555555558,
+      "direction": "decrease"
     },
     "mean_judge_score": {
-      "baseline": 2.625,
+      "baseline": 3.9583333333333335,
       "corrupted": 3.7777777777777777,
-      "delta": 1.1527777777777777,
-      "direction": "increase"
+      "delta": -0.1805555555555558,
+      "direction": "decrease"
     }
   },
   "event_evidence": [
@@ -133,8 +133,8 @@
   "guarded_conclusions": [
     "Structural data quality worsened: duplicate IDs and invalid summaries increased.",
     "Freshness worsened because stale row count and stale ratio increased.",
-    "Retrieval quality worsened because retrieval_hit_rate decreased.",
-    "Token F1 and judge metrics increased, so the artifacts do not support a claim that every RAG metric worsened.",
+    "Metrics below baseline: retrieval_hit_rate, mean_token_f1, judge_accuracy, mean_judge_score.",
+    "Aggregate metric changes cannot be attributed to one corruption event without an isolated experiment.",
     "Noise and title truncation are not directly detected by the current quality checks."
   ],
   "artifacts": {

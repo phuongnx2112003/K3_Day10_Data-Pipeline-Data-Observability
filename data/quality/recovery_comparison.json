@@ -1,12 +1,12 @@
 {
   "state": "baseline_vs_corrupted_vs_repaired",
-  "generated_at_utc": "2026-08-06T05:28:42.080546+00:00",
+  "generated_at_utc": "2026-08-06T05:33:23.354784+00:00",
   "recovery_status": "partial",
   "quality_freshness_recovered_to_baseline": true,
   "evaluation_metrics_recovered": false,
   "unresolved_signals": [],
   "unresolved_metrics": [
-    "mean_judge_score"
+    "judge_accuracy"
   ],
   "signal_comparison": {
     "row_count": {
@@ -84,28 +84,28 @@
       "outcome": "restored_to_baseline"
     },
     "mean_token_f1": {
-      "baseline": 0.4235907473399701,
+      "baseline": 0.7569240806733034,
       "corrupted": 0.660252909856381,
-      "repaired": 0.4235907473399701,
-      "corrupted_delta": 0.23666216251641087,
+      "repaired": 0.7569240806733034,
+      "corrupted_delta": -0.09667117081692245,
       "repaired_delta": 0.0,
       "outcome": "restored_to_baseline"
     },
     "judge_accuracy": {
-      "baseline": 0.3333333333333333,
+      "baseline": 0.6805555555555556,
       "corrupted": 0.625,
-      "repaired": 0.3472222222222222,
-      "corrupted_delta": 0.2916666666666667,
-      "repaired_delta": 0.013888888888888895,
-      "outcome": "above_baseline"
+      "repaired": 0.6666666666666666,
+      "corrupted_delta": -0.05555555555555558,
+      "repaired_delta": -0.01388888888888895,
+      "outcome": "below_baseline"
     },
     "mean_judge_score": {
-      "baseline": 2.625,
+      "baseline": 3.9583333333333335,
       "corrupted": 3.7777777777777777,
-      "repaired": 2.361111111111111,
-      "corrupted_delta": 1.1527777777777777,
-      "repaired_delta": -0.26388888888888884,
-      "outcome": "below_baseline"
+      "repaired": 3.9583333333333335,
+      "corrupted_delta": -0.1805555555555558,
+      "repaired_delta": 0.0,
+      "outcome": "restored_to_baseline"
     }
   },
   "status_comparison": {
@@ -127,12 +127,12 @@
   },
   "conclusions": [
     "Structural quality and measured freshness signals returned to their baseline values.",
-    "Retrieval hit rate and mean token F1 returned exactly to baseline.",
-    "Judge accuracy is above baseline, but mean judge score remains below baseline.",
+    "Metrics restored exactly to baseline: retrieval_hit_rate, mean_token_f1, mean_judge_score.",
+    "Metrics still below baseline: judge_accuracy.",
     "Overall recovery is partial because at least one metric or audit signal remains unresolved."
   ],
   "limitations": [
-    "Metrics still below baseline: mean_judge_score.",
+    "Metrics still below baseline: judge_accuracy.",
     "Repaired freshness is still FAIL because one source record is older than the 180-day threshold; this matches the baseline condition.",
     "Repaired embedding audit is not PASS: persist_path_matches_config.",
     "Ragas was skipped, so no Ragas-based recovery claim is made."

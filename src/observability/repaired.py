@@ -185,6 +185,16 @@ def run_repaired_observability(settings: Settings) -> dict[str, Any]:
     ]
     quality_recovered = not unresolved_signals
     metric_recovered = not unresolved_metrics
+    restored_metrics = [
+        name
+        for name, values in metric_comparison.items()
+        if values["outcome"] == "restored_to_baseline"
+    ]
+    above_baseline_metrics = [
+        name
+        for name, values in metric_comparison.items()
+        if values["outcome"] == "above_baseline"
+    ]
     samples_match_answers = repaired_metrics.get("samples") == repaired_answers_count
     recovery_status = (
         "complete"
@@ -210,6 +220,27 @@ def run_repaired_observability(settings: Settings) -> dict[str, Any]:
     ragas = repaired_metrics.get("ragas", {})
     if isinstance(ragas, dict) and ragas.get("skipped"):
         limitations.append("Ragas was skipped, so no Ragas-based recovery claim is made.")
+
+    conclusions = [
+        "Structural quality and measured freshness signals returned to their baseline values."
+    ]
+    if restored_metrics:
+        conclusions.append(
+            "Metrics restored exactly to baseline: " + ", ".join(restored_metrics) + "."
+        )
+    if above_baseline_metrics:
+        conclusions.append(
+            "Metrics above baseline: " + ", ".join(above_baseline_metrics) + "."
+        )
+    if unresolved_metrics:
+        conclusions.append(
+            "Metrics still below baseline: " + ", ".join(unresolved_metrics) + "."
+        )
+    conclusions.append(
+        "Overall recovery is partial because at least one metric or audit signal remains unresolved."
+        if recovery_status == "partial"
+        else "All measured recovery conditions passed."
+    )
 
     comparison = {
         "state": "baseline_vs_corrupted_vs_repaired",
@@ -238,12 +269,7 @@ def run_repaired_observability(settings: Settings) -> dict[str, Any]:
                 "repaired": repaired_audit.get("success"),
             },
         },
-        "conclusions": [
-            "Structural quality and measured freshness signals returned to their baseline values.",
-            "Retrieval hit rate and mean token F1 returned exactly to baseline.",
-            "Judge accuracy is above baseline, but mean judge score remains below baseline.",
-            "Overall recovery is partial because at least one metric or audit signal remains unresolved.",
-        ],
+        "conclusions": conclusions,
         "limitations": limitations,
         "artifacts": {
             "baseline_metrics": str(settings.paths.baseline_metrics),

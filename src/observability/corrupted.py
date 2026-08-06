@@ -228,6 +228,30 @@ def run_corrupted_observability(settings: Settings) -> dict[str, Any]:
     unchanged_signals = [
         name for name, item in signal_deltas.items() if item["direction"] == "unchanged"
     ]
+    decreased_metrics = [
+        name for name, item in metric_deltas.items() if item["direction"] == "decrease"
+    ]
+    increased_metrics = [
+        name for name, item in metric_deltas.items() if item["direction"] == "increase"
+    ]
+    guarded_conclusions = [
+        "Structural data quality worsened: duplicate IDs and invalid summaries increased.",
+        "Freshness worsened because stale row count and stale ratio increased.",
+    ]
+    if decreased_metrics:
+        guarded_conclusions.append(
+            "Metrics below baseline: " + ", ".join(decreased_metrics) + "."
+        )
+    if increased_metrics:
+        guarded_conclusions.append(
+            "Metrics above baseline: " + ", ".join(increased_metrics) + "."
+        )
+    guarded_conclusions.extend(
+        [
+            "Aggregate metric changes cannot be attributed to one corruption event without an isolated experiment.",
+            "Noise and title truncation are not directly detected by the current quality checks.",
+        ]
+    )
     evidence = {
         "state": "baseline_vs_corrupted",
         "corruption_log": str(settings.paths.corruption_log),
@@ -235,13 +259,7 @@ def run_corrupted_observability(settings: Settings) -> dict[str, Any]:
         "metric_deltas": metric_deltas,
         "event_evidence": event_evidence,
         "unchanged_signals": unchanged_signals,
-        "guarded_conclusions": [
-            "Structural data quality worsened: duplicate IDs and invalid summaries increased.",
-            "Freshness worsened because stale row count and stale ratio increased.",
-            "Retrieval quality worsened because retrieval_hit_rate decreased.",
-            "Token F1 and judge metrics increased, so the artifacts do not support a claim that every RAG metric worsened.",
-            "Noise and title truncation are not directly detected by the current quality checks.",
-        ],
+        "guarded_conclusions": guarded_conclusions,
         "artifacts": {
             "quality": str(quality_path),
             "freshness": str(freshness_path),

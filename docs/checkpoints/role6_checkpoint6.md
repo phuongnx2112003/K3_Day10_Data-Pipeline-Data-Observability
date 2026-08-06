@@ -81,28 +81,27 @@ fresh”.
 | Metric | Baseline | Corrupted | Repaired | Repaired − baseline | Kết luận |
 | --- | ---: | ---: | ---: | ---: | --- |
 | Retrieval hit rate | 1.0000 | 0.9167 | 1.0000 | 0.0000 | Đã về baseline |
-| Mean token F1 | 0.4236 | 0.6603 | 0.4236 | 0.0000 | Đã về baseline |
-| Judge accuracy | 0.3333 | 0.6250 | 0.3472 | +0.0139 | Cao hơn baseline |
-| Mean judge score | 2.6250 | 3.7778 | 2.3611 | -0.2639 | Còn dưới baseline |
+| Mean token F1 | 0.7569 | 0.6603 | 0.7569 | 0.0000 | Đã về baseline |
+| Judge accuracy | 0.6806 | 0.6250 | 0.6667 | -0.0139 | Còn dưới baseline |
+| Mean judge score | 3.9583 | 3.7778 | 3.9583 | 0.0000 | Đã về baseline |
 
-Không được nói mọi metric xấu đi khi corruption xảy ra: Token F1 và judge metrics
-của corrupted run thực tế cao hơn baseline. Sau repair, retrieval và Token F1 khớp
-baseline, judge accuracy cao hơn baseline, nhưng mean judge score vẫn thấp hơn
-baseline khoảng 0.264 điểm.
+Cả bốn metrics đều giảm trong corrupted run mới nhất. Sau repair, retrieval, Token F1
+và mean judge score khớp baseline; judge accuracy tăng so với corrupted nhưng vẫn thấp
+hơn baseline khoảng 0.0139.
 
 ## 6. Vì sao recovery là `partial`?
 
 Quality và freshness signals đã hồi phục về baseline, nhưng toàn bộ hệ thống chưa đủ
 bằng chứng để ghi `complete` vì:
 
-- `mean_judge_score` repaired còn thấp hơn baseline;
+- `judge_accuracy` repaired còn thấp hơn baseline;
 - repaired embedding audit còn fail `persist_path_matches_config` do manifest đang
   lưu đường dẫn workspace cũ;
 - Ragas đang được skip, nên không có Ragas evidence để kết luận;
 - freshness repaired vẫn fail theo ngưỡng 180 ngày, dù đây cũng là trạng thái baseline.
 
-`judge_accuracy` cao hơn baseline là tín hiệu tốt, nhưng không thể dùng một metric này
-để che đi metric/audit còn chưa đạt.
+Judge accuracy đã hồi phục một phần từ corrupted nhưng chưa về baseline, nên không thể
+dùng các metric đã hồi phục khác để kết luận toàn bộ recovery hoàn tất.
 
 ## 7. Giới hạn của kết luận
 

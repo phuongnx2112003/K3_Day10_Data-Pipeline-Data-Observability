@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-06T05:28:42.079574+00:00",
+  "generated_at_utc": "2026-08-06T05:33:23.352263+00:00",
   "manifest_path": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings_repaired.json",
   "backend": "chroma",
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7,7 +7,7 @@
   "expected_collection_name": "papers-repaired",
   "document_count": 24,
   "clean_row_count": 24,
-  "manifest_persist_path": "D:\\AI Th\u1ef1c chi\u1ebfn\\Th\u1ef1c h\u00e0nh\\Day10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+  "manifest_persist_path": "D:\\Vin\\Lab\\B10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
   "configured_persist_path": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
   "success": false,
   "passed_checks": 10,

@@ -1,6 +1,6 @@
 {
   "state": "repaired",
-  "generated_at_utc": "2026-08-06T05:28:42.079574+00:00",
+  "generated_at_utc": "2026-08-06T05:33:23.354784+00:00",
   "signals": {
     "row_count": 24,
     "null_paper_id_rows": 0,
@@ -31,9 +31,9 @@
   "metrics": {
     "samples": 72,
     "retrieval_hit_rate": 1.0,
-    "mean_token_f1": 0.4235907473399701,
-    "judge_accuracy": 0.3472222222222222,
-    "mean_judge_score": 2.361111111111111
+    "mean_token_f1": 0.7569240806733034,
+    "judge_accuracy": 0.6666666666666666,
+    "mean_judge_score": 3.9583333333333335
   },
   "answers_count": 72
 }
