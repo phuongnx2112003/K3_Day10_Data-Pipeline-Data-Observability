@@ -123,3 +123,54 @@ Việc import full package `retrieval` trong môi trường hiện tại báo th
 `langchain`. Đây là dependency môi trường, không phải lỗi thiếu field trong dữ
 liệu. Contract index đã được kiểm tra bằng đúng phép dựng document/metadata mà
 `LocalEmbeddingIndex` sử dụng, không gọi model hoặc tải embedding.
+
+## CP3 - Artifact, quality checks và sửa contract
+
+### Kiểm tra clean artifacts
+
+Đã mở và kiểm tra trực tiếp bốn artifact trong `data/clean/`:
+
+- `cleaned_records.csv`: 24 rows.
+- `cleaned_records.json`: 24 rows.
+- `papers_clean.csv`: 24 rows.
+- `papers_clean.json`: 24 rows.
+
+Tất cả đều có `age_days` dạng số nguyên, nhỏ nhất 1 và lớn nhất 193 tại ngày
+chạy. Cả bốn artifact có 0 giá trị `text_for_embedding` rỗng. Nội dung embedding
+được tạo động từ title, summary, authors và categories của từng row.
+
+Phát hiện contract thực tế: hai artifact `cleaned_records.*` trước CP3 chỉ chứa
+9 cột và thiếu `age_days`, trong khi artifact baseline `papers_clean.*` đã có
+cột này. Đã sửa `TARGET_CLEAN_COLUMNS` thành contract 10 cột có `age_days`, sau
+đó chạy lại raw-to-clean. Kết quả: input 24, invalid 0, duplicate 0, clean 24.
+
+### Xác minh quality check không hardcode Pass
+
+Đã tăng cường `run_data_quality_checks` để tính trực tiếp từ DataFrame:
+
+- Kiểm tra required columns và row count.
+- Bắt paper ID null/blank và duplicate không phân biệt hoa thường.
+- Bắt title và embedding text rỗng.
+- Parse và bắt `published` không hợp lệ.
+- Bắt `age_days` null, không phải số hoặc âm.
+- Tính `overall_pass` bằng `all()` trên các check bắt buộc thay vì gán cố định.
+- Các tỷ lệ summary, embedding và freshness vẫn được báo cáo như metric.
+
+Chạy trên `papers_clean.json` thật cho kết quả `overall_pass: true`: thiếu cột
+0, ID blank 0, ID duplicate 0, title blank 0, embedding blank 0, ngày lỗi 0,
+age lỗi 0. Có 1 row stale trên ngưỡng 180 ngày; freshness ratio là 0.9583. Đây
+là tín hiệu dữ liệu thật và freshness report vẫn trả `is_fresh: false`, không
+bị che thành Pass.
+
+Để chứng minh negative path, test tạo bản copy và cố ý tiêm ID blank, duplicate
+khác kiểu hoa/thường, title blank, embedding blank, ngày lỗi và age âm. Quality
+check trả `overall_pass: false` và từng check tương ứng đều False. Test nằm tại
+`tests/test_quality_checks.py`.
+
+### Chạy lại
+
+Đã sinh lại `cleaned_records.csv/json` và cập nhật
+`data/quality/baseline_quality.json` từ 24 rows thật. Không cần rebuild toàn bộ
+vector index vì traceback contract chỉ tác động artifact giao tiếp
+`cleaned_records.*`; baseline dùng `papers_clean.*`, vốn đã có `age_days` và đủ
+field index. Kiểm thử CP3 đạt 4 tests.
