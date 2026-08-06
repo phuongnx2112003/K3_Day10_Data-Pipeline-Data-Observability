@@ -90,7 +90,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
             
-        elif self.path == "/api/metrics":
+        elif parsed_path.path == "/api/metrics":
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
@@ -106,13 +106,11 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
             
-        elif self.path.startswith("/api/observability"):
+        elif parsed_path.path.startswith("/api/observability"):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             
-            from urllib.parse import urlparse, parse_qs
-            parsed_path = urlparse(self.path)
             query_params = parse_qs(parsed_path.query)
             state = query_params.get('state', ['repaired'])[0]
             
