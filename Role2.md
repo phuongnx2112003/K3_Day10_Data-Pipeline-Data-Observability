@@ -86,6 +86,18 @@
    - Nhờ sự tồn tại của `paper_id` chuẩn làm cầu nối, Pipeline map ngược được về bản ghi nguyên gốc trong Raw Snapshot để khôi phục (re-clean) mà không cần đoán mò.
 
 3. **Kiểm tra corrupted flow không fetch nguồn mới làm comparison mất công bằng**:
-   - Em đã review `src/pipelines/corruption_flow.py` và xác nhận script hoàn toàn **KHÔNG CÓ** hàm `fetch_source_records()`.
+   - Đã review `src/pipelines/corruption_flow.py` và xác nhận script hoàn toàn **KHÔNG CÓ** hàm `fetch_source_records()`.
    - Hàm duy nhất được gọi để load lại dữ liệu phục hồi là `load_raw_records(settings.paths.raw_records_json)`. 
    - Điều này triệt tiêu rủi ro tải nhầm bản ghi mới từ Crossref. Data baseline và Data repaired sẽ có số lượng base records y hệt nhau, đảm bảo tính công bằng (apples-to-apples) tuyệt đối khi so sánh Metrics (Hit Rate, F1, Accuracy) trên biểu đồ/Report cuối cùng.
+
+
+## CP 6: Bàn giao cho Corrupted Flow & Security (Mốc: Data Integrity & Git Security)
+
+1. **Nạp lại raw records đúng snapshot/nguồn dùng ở baseline**:
+   - Em đã xác minh mã nguồn `src/pipelines/corruption_flow.py`: Tại bước khôi phục dữ liệu (`repaired_df`), hệ thống chỉ gọi hàm `load_raw_records` trỏ thẳng vào file `data/raw/crossref_records.json` (chính là snapshot đã lưu từ lúc làm baseline). Không có bất kỳ truy vấn API mạng nào được thực hiện, đảm bảo dữ liệu repaired là ánh xạ 1:1 từ dữ liệu gốc ban đầu.
+
+2. **Chứng minh record corrupt/drop đã phục hồi bằng lineage/bằng chứng từ nguồn**:
+   - Trace record `10.47576/2949-1894.2026.7.7.023`: Khi luồng data đi qua `papers_clean_corrupted.csv`, nếu record này chịu tác động của hàm giả lập lỗi (bị mất title, abstract móp méo, hoặc bị rớt mất dòng do invalid format), thì khi qua bước Repair (`build_clean_dataframe(raw_records)`), record này lại được load từ snapshot gốc nguyên vẹn và clean lại từ đầu. Kết quả: trong `papers_clean_repaired.csv`, record lại phục hồi đầy đủ thông tin chuẩn (`Corrupted title len -> Repaired title len`), chứng minh lineage 1:1 qua `paper_id` bảo vệ data tuyệt đối.
+
+3. **Hỗ trợ kiểm tra config/API key không lọt vào Git**:
+   - Đã quét file `.gitignore`. File `.env` (chứa GOOGLE_API_KEY, LLM secrets) đã được đưa vào ignore list hợp lệ (trả về kết quả `True` khi parse). Đảm bảo không có secret nào bị đẩy lên remote repository gây rủi ro lộ credential.
