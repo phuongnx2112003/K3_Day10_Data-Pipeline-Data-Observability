@@ -128,12 +128,19 @@ export default function App() {
       <nav className="cyber-nav">
         <div className="cyber-nav-content">
           <div className="brand-group" onClick={() => setActiveTab('chat')}>
-            <div className="logo-glow-box">
-              <Sparkles size={24} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: '12px', padding: '8px', boxShadow: '0 0 15px rgba(16, 185, 129, 0.2), inset 0 1px 1px rgba(255,255,255,0.1)' }}>
+              <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 28L20 12L28 28" stroke="#10b981" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 22H25" stroke="#10b981" strokeWidth="3.5" strokeLinecap="round"/>
+                <circle cx="20" cy="12" r="3.5" fill="#10b981" />
+                <circle cx="12" cy="28" r="2.5" fill="#0f172a" stroke="#10b981" strokeWidth="2.5"/>
+                <circle cx="28" cy="28" r="2.5" fill="#0f172a" stroke="#10b981" strokeWidth="2.5"/>
+              </svg>
             </div>
-            <div>
-              <span className="brand-title">AURA CYBER</span>
-              <span className="neon-badge" style={{ marginLeft: '10px' }}>PRO RAG</span>
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: '6px' }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 900, fontSize: '1.25rem', letterSpacing: '-0.02em', color: '#f8fafc' }}>AURA</span>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300, fontSize: '1.25rem', letterSpacing: '0.05em', color: '#94a3b8', marginLeft: '4px' }}>CYBER</span>
+              <span className="neon-badge" style={{ marginLeft: '12px', fontSize: '0.7rem', padding: '2px 6px' }}>PRO RAG</span>
             </div>
           </div>
 
