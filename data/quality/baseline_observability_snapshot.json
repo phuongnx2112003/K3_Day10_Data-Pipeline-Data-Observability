@@ -1,0 +1,39 @@
+{
+  "state": "baseline",
+  "generated_at_utc": "2026-08-06T04:39:54.667430+00:00",
+  "signals": {
+    "row_count": 24,
+    "null_paper_id_rows": 0,
+    "duplicate_paper_id_rows": 0,
+    "missing_title_rows": 0,
+    "invalid_summary_rows": 0,
+    "invalid_age_days_rows": 0,
+    "stale_rows": 1,
+    "stale_ratio": 0.041666666666666664,
+    "latest_published": "2026-08-05",
+    "oldest_published": "2026-01-25",
+    "embedding_document_count": 24,
+    "embedding_collection_name": "papers-baseline"
+  },
+  "status": {
+    "quality_success": false,
+    "freshness_is_fresh": false,
+    "embedding_audit_success": false
+  },
+  "failed_checks": {
+    "quality": [
+      "age_days_within_freshness_threshold"
+    ],
+    "embedding": [
+      "persist_path_matches_config"
+    ]
+  },
+  "metrics": {
+    "samples": null,
+    "retrieval_hit_rate": null,
+    "mean_token_f1": null,
+    "judge_accuracy": null,
+    "mean_judge_score": null
+  },
+  "answers_count": null
+}

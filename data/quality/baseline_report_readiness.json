@@ -1,0 +1,16 @@
+{
+  "status": "pending",
+  "required_inputs": {
+    "clean_csv": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\clean\\papers_clean.csv",
+    "raw_records_json": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\raw\\crossref_records.json",
+    "embedding_manifest": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings.json",
+    "baseline_metrics": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\baseline_metrics.json",
+    "baseline_answers": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\baseline_answers.json"
+  },
+  "missing_inputs": [
+    "baseline_metrics",
+    "baseline_answers"
+  ],
+  "report_generated": false,
+  "report_validated": false
+}
