@@ -110,6 +110,7 @@ def run_server():
     print(f"==================================================")
     print(f"🚀 AURA Web UI Server running at: http://localhost:{PORT}")
     print(f"==================================================")
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), CustomHandler) as httpd:
         httpd.serve_forever()
 
