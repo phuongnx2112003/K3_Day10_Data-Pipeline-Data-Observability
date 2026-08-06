@@ -172,4 +172,8 @@ class LocalEmbeddingIndex:
             return self.documents_by_paper_id[needle]
         if needle in self.documents_by_title:
             return self.documents_by_title[needle]
+        # Thêm partial matching cho title
+        for title, document in self.documents_by_title.items():
+            if needle in title:
+                return document
         return None
