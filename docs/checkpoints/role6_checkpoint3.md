@@ -2,14 +2,13 @@
 
 ## 1. Trạng thái hiện tại
 
-Phần code Checkpoint 3 đã hoàn thiện. Baseline report đang ở trạng thái
-`pending` vì chưa nhận được hai artifacts từ người phụ trách Evaluation:
+Phần code Checkpoint 3 đã hoàn thiện. Sau khi tích hợp `main`, Role 6 đã nhận đủ
+hai artifacts từ người phụ trách Evaluation:
 
 - `data/results/baseline_metrics.json`
 - `data/results/baseline_answers.json`
 
-Role 6 không tạo file giả hoặc điền metric mẫu vào `phase1_report.md`.
-Khi hai file trên được bổ sung, cùng một lệnh sẽ tự sinh và kiểm chứng report.
+Runner đã sinh `phase1_report.md` từ số liệu thật và validation đã pass.
 
 ## 2. Những gì đã triển khai
 
@@ -59,8 +58,8 @@ File này chỉ xuất hiện sau khi report thật được tạo.
 - `mean_judge_score`;
 - `answers_count`.
 
-Hiện các trường metric là `null`, phản ánh đúng việc chưa nhận evaluation
-artifacts. Chúng sẽ được điền tự động khi chạy lại runner.
+Các trường metric đã được điền từ `baseline_metrics.json`; `answers_count` được
+lấy độc lập từ `baseline_answers.json` để đối chiếu sample count.
 
 ## 3. Artifacts đã cập nhật
 
@@ -74,13 +73,13 @@ Readiness hiện tại:
 
 ```json
 {
-  "status": "pending",
-  "missing_inputs": [
-    "baseline_metrics",
-    "baseline_answers"
-  ],
-  "report_generated": false,
-  "report_validated": false
+  "status": "complete",
+  "missing_inputs": [],
+  "report_generated": true,
+  "report_validated": true,
+  "metrics_samples": 72,
+  "answers_count": 72,
+  "metrics_samples_match_answers": true
 }
 ```
 
@@ -162,8 +161,8 @@ Kết quả:
 Toàn bộ test suite sau khi tích hợp:
 
 ```text
-..........                                                               [100%]
-10 passed in 1.00s
+...........                                                              [100%]
+11 passed in 0.94s
 ```
 
 ## 7. Dependency cần bàn giao
@@ -203,7 +202,7 @@ metrics.
 - [x] Thêm runner tự hoàn tất khi evaluation artifacts xuất hiện.
 - [x] Ghi readiness artifact trung thực.
 - [x] Chạy 6 test CP3 thành công.
-- [x] Chạy toàn bộ test suite: 10 test thành công.
-- [ ] Chờ `baseline_metrics.json`.
-- [ ] Chờ `baseline_answers.json`.
-- [ ] Sinh và validate `phase1_report.md` thật sau khi đủ input.
+- [x] Chạy toàn bộ test suite sau merge: 11 test thành công.
+- [x] Nhận `baseline_metrics.json`.
+- [x] Nhận `baseline_answers.json`.
+- [x] Sinh và validate `phase1_report.md` từ artifacts thật.

@@ -28,6 +28,9 @@ def test_quality_and_freshness_pass_for_valid_data(tmp_path):
                 "summary": "A sufficiently detailed summary " * 3,
                 "published": _date_ago(10),
                 "age_days": 10,
+                "text_for_embedding": "Title and sufficiently detailed summary",
+                "authors_joined": "Author A",
+                "categories_joined": "AI",
             },
             {
                 "paper_id": "10.1/beta",
@@ -35,6 +38,9 @@ def test_quality_and_freshness_pass_for_valid_data(tmp_path):
                 "summary": "Another sufficiently detailed summary " * 3,
                 "published": _date_ago(20),
                 "age_days": 20,
+                "text_for_embedding": "Another title and sufficiently detailed summary",
+                "authors_joined": "Author B",
+                "categories_joined": "RAG",
             },
         ]
     )
@@ -76,7 +82,7 @@ def test_quality_reports_corruption_instead_of_crashing(tmp_path):
     freshness = build_freshness_report(
         df, settings, settings.paths.quality_dir / "corrupted_freshness.json"
     )
-    checks = {item["name"]: item for item in quality["checks"]}
+    checks = {item["name"]: item for item in quality["check_results"]}
 
     assert quality["success"] is False
     assert checks["paper_id_unique"]["observed"] == 2

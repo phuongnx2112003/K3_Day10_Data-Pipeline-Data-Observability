@@ -18,7 +18,7 @@ def test_generate_phase1_report_renders_values_from_payloads(tmp_path):
         },
         quality={
             "success": False,
-            "checks": [
+            "check_results": [
                 {
                     "name": "paper_id_unique",
                     "observed": 0,
@@ -61,7 +61,7 @@ def test_generate_phase1_report_renders_values_from_payloads(tmp_path):
         },
         quality={
             "success": False,
-            "checks": [
+            "check_results": [
                 {
                     "name": "paper_id_unique",
                     "observed": 0,

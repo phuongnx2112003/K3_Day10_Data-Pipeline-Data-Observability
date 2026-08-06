@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "complete",
   "required_inputs": {
     "clean_csv": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\clean\\papers_clean.csv",
     "raw_records_json": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\raw\\crossref_records.json",
@@ -7,10 +7,10 @@
     "baseline_metrics": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\baseline_metrics.json",
     "baseline_answers": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\baseline_answers.json"
   },
-  "missing_inputs": [
-    "baseline_metrics",
-    "baseline_answers"
-  ],
-  "report_generated": false,
-  "report_validated": false
+  "missing_inputs": [],
+  "report_generated": true,
+  "report_validated": true,
+  "metrics_samples": 72,
+  "answers_count": 72,
+  "metrics_samples_match_answers": true
 }

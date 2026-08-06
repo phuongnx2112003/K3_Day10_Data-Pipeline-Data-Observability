@@ -1,7 +1,7 @@
 {
   "backend": "chroma",
   "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "persist_path": "D:\\AI Th\u1ef1c chi\u1ebfn\\Th\u1ef1c h\u00e0nh\\Day10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+  "persist_path": "D:\\Vin\\Lab\\B10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
   "collection_name": "papers-baseline",
   "documents": [
     {

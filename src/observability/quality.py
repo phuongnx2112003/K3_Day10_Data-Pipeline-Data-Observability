@@ -47,7 +47,16 @@ def run_data_quality_checks(df: pd.DataFrame, settings: Settings, report_name: s
         raise TypeError("df must be a pandas DataFrame.")
 
     total_rows = len(df)
-    required_columns = ("paper_id", "title", "summary", "published", "age_days")
+    required_columns = (
+        "paper_id",
+        "title",
+        "summary",
+        "published",
+        "age_days",
+        "text_for_embedding",
+        "authors_joined",
+        "categories_joined",
+    )
     missing_columns = [column for column in required_columns if column not in df.columns]
 
     def missing_count(column: str) -> int:
@@ -57,7 +66,12 @@ def run_data_quality_checks(df: pd.DataFrame, settings: Settings, report_name: s
     null_titles = missing_count("title")
 
     if "paper_id" in df.columns:
-        valid_ids = df.loc[~_blank_mask(df["paper_id"]), "paper_id"].astype("string").str.strip()
+        valid_ids = (
+            df.loc[~_blank_mask(df["paper_id"]), "paper_id"]
+            .astype("string")
+            .str.strip()
+            .str.casefold()
+        )
         duplicate_paper_id_rows = int(valid_ids.duplicated(keep=False).sum())
     else:
         duplicate_paper_id_rows = total_rows
@@ -73,7 +87,11 @@ def run_data_quality_checks(df: pd.DataFrame, settings: Settings, report_name: s
         )
         invalid_summary_rows = int((summary_lengths < MIN_SUMMARY_CHARS).sum())
     else:
+        summary_lengths = pd.Series([0] * total_rows, dtype="int64")
         invalid_summary_rows = total_rows
+
+    blank_summary_rows = missing_count("summary")
+    blank_text_rows = missing_count("text_for_embedding")
 
     if "published" in df.columns:
         published = pd.to_datetime(df["published"], errors="coerce", utc=True, format="mixed")
@@ -89,7 +107,7 @@ def run_data_quality_checks(df: pd.DataFrame, settings: Settings, report_name: s
         invalid_age_days_rows = total_rows
         stale_rows = total_rows
 
-    checks = [
+    check_results = [
         _check("row_count_positive", total_rows, "> 0", total_rows > 0),
         _check("required_columns_present", len(missing_columns), "0 missing columns", not missing_columns),
         _check("paper_id_not_null", null_paper_ids, "0 invalid rows", null_paper_ids == 0),
@@ -125,19 +143,57 @@ def run_data_quality_checks(df: pd.DataFrame, settings: Settings, report_name: s
             stale_rows == 0,
         ),
     ]
-    failed_checks = [check["name"] for check in checks if not check["success"]]
+    structural_checks = {
+        "required_columns_present": not missing_columns,
+        "row_count_positive": total_rows > 0,
+        "paper_id_not_blank": null_paper_ids == 0,
+        "paper_id_unique": duplicate_paper_id_rows == 0,
+        "title_not_blank": null_titles == 0,
+        "published_valid": invalid_published_rows == 0,
+        "age_days_valid": invalid_age_days_rows == 0,
+        "text_for_embedding_not_blank": blank_text_rows == 0,
+        "summary_min_length": invalid_summary_rows == 0,
+    }
+    summary_present_ratio = 1.0 - (blank_summary_rows / total_rows) if total_rows else 0.0
+    text_present_ratio = 1.0 - (blank_text_rows / total_rows) if total_rows else 0.0
+    fresh_rows_ratio = 1.0 - (stale_rows / total_rows) if total_rows else 0.0
+    checks = {
+        **structural_checks,
+        "summary_present_ratio": round(summary_present_ratio, 4),
+        "text_for_embedding_present_ratio": round(text_present_ratio, 4),
+        "fresh_rows_ratio": round(fresh_rows_ratio, 4),
+    }
+    failed_checks = [check["name"] for check in check_results if not check["success"]]
+    generated_at = datetime.now(UTC).isoformat()
     payload = {
         "report_name": Path(str(report_name)).stem,
-        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "generated_at": generated_at.replace("+00:00", "Z"),
+        "generated_at_utc": generated_at,
         "total_rows": total_rows,
         "required_columns": list(required_columns),
         "missing_columns": missing_columns,
         "summary_min_chars": MIN_SUMMARY_CHARS,
         "freshness_threshold_days": settings.freshness_threshold_days,
+        "overall_pass": all(structural_checks.values()),
         "success": not failed_checks,
-        "passed_checks": len(checks) - len(failed_checks),
+        "passed_checks": len(check_results) - len(failed_checks),
         "failed_checks": failed_checks,
         "checks": checks,
+        "check_results": check_results,
+        "counts": {
+            "blank_paper_id": null_paper_ids,
+            "duplicate_paper_id": duplicate_paper_id_rows,
+            "blank_title": null_titles,
+            "blank_summary": blank_summary_rows,
+            "blank_text_for_embedding": blank_text_rows,
+            "invalid_published": invalid_published_rows,
+            "invalid_age_days": invalid_age_days_rows,
+            "stale_rows": stale_rows,
+            "min_summary_chars": int(summary_lengths.min()) if total_rows else 0,
+            "max_summary_chars": int(summary_lengths.max()) if total_rows else 0,
+            "mean_summary_chars": round(float(summary_lengths.mean()), 2) if total_rows else 0.0,
+        },
+        "thresholds": {"freshness_threshold_days": settings.freshness_threshold_days},
     }
     write_json(_quality_report_path(settings, report_name), payload)
     return payload
@@ -175,14 +231,18 @@ def build_freshness_report(df: pd.DataFrame, settings: Settings, report_path) ->
         and invalid_age_days_rows == 0
         and stale_rows == 0
     )
+    generated_at = datetime.now(UTC).isoformat()
     payload = {
-        "generated_at_utc": datetime.now(UTC).isoformat(),
+        "generated_at": generated_at.replace("+00:00", "Z"),
+        "generated_at_utc": generated_at,
         "source_timestamp_column": "published",
         "age_column": "age_days",
         "threshold_days": settings.freshness_threshold_days,
+        "freshness_threshold_days": settings.freshness_threshold_days,
         "latest_published": latest,
         "oldest_published": oldest,
         "stale_rows": stale_rows,
+        "fresh_rows": total_rows - stale_rows,
         "total_rows": total_rows,
         "stale_ratio": stale_ratio,
         "invalid_timestamp_rows": invalid_timestamp_rows,
@@ -328,7 +388,8 @@ def build_observability_snapshot(
         raise ValueError("state must be baseline, corrupted, or repaired.")
 
     quality_checks = {
-        item.get("name"): item.get("observed") for item in quality.get("checks", [])
+        item.get("name"): item.get("observed")
+        for item in quality.get("check_results", [])
     }
     payload = {
         "state": normalized_state,

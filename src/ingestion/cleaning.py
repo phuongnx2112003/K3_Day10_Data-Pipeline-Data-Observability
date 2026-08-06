@@ -19,6 +19,7 @@ TARGET_CLEAN_COLUMNS = [
     "title",
     "text_for_embedding",
     "published",
+    "age_days",
     "authors_joined",
     "categories_joined",
     "summary",
@@ -218,7 +219,7 @@ def save_target_clean_data(
     csv_path: str | Path,
     json_path: str | Path,
 ) -> None:
-    """Persist exactly the agreed nine-column CP0 exchange schema."""
+    """Persist the agreed clean exchange schema, including freshness age."""
     missing = sorted(set(TARGET_CLEAN_COLUMNS).difference(df.columns))
     if missing:
         raise ValueError(f"Cannot export clean data; missing columns: {missing}")
