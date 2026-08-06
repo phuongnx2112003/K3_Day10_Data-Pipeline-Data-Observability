@@ -5,10 +5,11 @@
 | Thông tin           | Nội dung                                                         |
 | :------------------ | :--------------------------------------------------------------- |
 | **Họ và tên**       | Lê Nguyễn Minh Đức                                               |
-| **MSSV**            | 01013                                                            |
+| **MSSV**            | 2A202601013                                                      |
 | **Khóa/Lớp**        | K3                                                               |
-| **Tên nhóm**        | Nhóm 6 người (Data Pipeline & Data Observability)                |
-| **Vai trò chính**   | **Vai trò 5: Evaluation Owner** (Evaluation Set & Metrics Owner) |
+| **Tên nhóm**        | 2k345                                                            |
+| **Vai trò chính**   | Vai trò 5: Evaluation Owner (Evaluation Set & Metrics Owner)     |
+| **Repository**      | `https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability-2k345-E403` |
 | **Ngày hoàn thành** | 2026-08-06                                                       |
 
 ---

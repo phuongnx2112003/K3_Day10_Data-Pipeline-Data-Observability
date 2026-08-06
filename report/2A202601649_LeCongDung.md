@@ -1,7 +1,3 @@
-Dưới đây là bản báo cáo đã được hoàn thiện chi tiết dựa trên các nhiệm vụ của **Vai trò 3 (Cleaning & Corruption)** mà bạn đang đảm nhiệm trong toàn bộ các mốc của dự án.
-
----
-
 # Member Role Report — Day 10: Data Pipeline & Data Observability
 
 ## 1. Thông tin cá nhân
@@ -10,10 +6,10 @@ Dưới đây là bản báo cáo đã được hoàn thiện chi tiết dựa t
 | --- | --- |
 | Họ và tên | Lê Công Dũng |
 | MSSV | 2A202601649 |
-| Khóa/Lớp | E403 |
+| Khóa/Lớp | K3 |
 | Tên nhóm | 2k345 |
 | Vai trò chính | Vai trò 3 (Cleaning & Corruption) |
-| Repository | [github.com/2k345/rag-data-pipeline](https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability-2k345-E403e) |
+| Repository | `https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability-2k345-E403` |
 | Ngày hoàn thành | 2026-08-06 |
 
 ## 2. Vai trò và phạm vi công việc

@@ -1,4 +1,4 @@
-# Individual Report — Day 10: Data Pipeline & Data Observability
+# Member Role Report — Day 10: Data Pipeline & Data Observability
 
 ## 1. Thông tin cá nhân
 
@@ -7,7 +7,7 @@
 | Họ và tên | Trần Đức Mạnh |
 | MSSV | 2A202601567 |
 | Khóa/Lớp | K3 |
-| Tên nhóm | Nhóm 6 thành viên |
+| Tên nhóm | 2k345 |
 | Vai trò chính | Vai trò 6 — Observability owner |
 | Phạm vi | Data quality, freshness, embedding audit và reporting |
 | Repository | `https://github.com/phuongnx2112003/K3_Day10_Data-Pipeline-Data-Observability` |
