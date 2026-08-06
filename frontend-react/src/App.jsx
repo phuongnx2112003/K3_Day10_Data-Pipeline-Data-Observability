@@ -27,13 +27,26 @@ export default function App() {
   const [inputQuestion, setInputQuestion] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [messages, setMessages] = useState([
-    {
-      sender: 'bot',
-      text: 'Xin chào! Tôi là AURA Cyber RAG Assistant. Hệ thống đã được đồng bộ với ChromaDB (MiniLM-L6-v2) và cơ sở dữ liệu học thuật Crossref. Bạn muốn truy vấn điều gì?',
-      sources: []
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('aura-chat-history');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
     }
-  ]);
+    return [
+      {
+        sender: 'bot',
+        text: 'Xin chào! Tôi là AURA Cyber RAG Assistant. Hệ thống đã được đồng bộ với ChromaDB (MiniLM-L6-v2) và cơ sở dữ liệu học thuật Crossref. Bạn muốn truy vấn điều gì?',
+        sources: []
+      }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('aura-chat-history', JSON.stringify(messages));
+  }, [messages]);
+  
   const [metrics, setMetrics] = useState(null);
   const [obs, setObs] = useState(null);
 
