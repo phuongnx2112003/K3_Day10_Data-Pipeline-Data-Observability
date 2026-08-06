@@ -152,6 +152,7 @@ def test_cp0_json_file_to_clean_outputs(tmp_path, capsys) -> None:
     assert clean.iloc[0]["categories_joined"] == ""
     assert clean.iloc[0]["pdf_url"] == ""
     assert clean.iloc[0]["age_days"] == 50
+    assert exported[0]["age_days"] == 50
     assert list(exported[0]) == TARGET_CLEAN_COLUMNS
     assert "Authors: И.В. Ермаков, В.В. Филатов" in exported[0]["text_for_embedding"]
     assert "input=3" in capsys.readouterr().out
