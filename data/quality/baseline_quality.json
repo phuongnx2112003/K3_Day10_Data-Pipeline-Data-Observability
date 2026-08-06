@@ -1,0 +1,46 @@
+{
+  "report_name": "baseline_quality",
+  "generated_at": "2026-08-06T04:40:50.212450Z",
+  "total_rows": 24,
+  "required_columns": [
+    "paper_id",
+    "title",
+    "summary",
+    "published",
+    "age_days",
+    "text_for_embedding",
+    "authors_joined",
+    "categories_joined"
+  ],
+  "missing_columns": [],
+  "overall_pass": true,
+  "checks": {
+    "required_columns_present": true,
+    "row_count_positive": true,
+    "paper_id_not_blank": true,
+    "paper_id_unique": true,
+    "title_not_blank": true,
+    "published_valid": true,
+    "age_days_valid": true,
+    "text_for_embedding_not_blank": true,
+    "summary_present_ratio": 1.0,
+    "text_for_embedding_present_ratio": 1.0,
+    "fresh_rows_ratio": 0.9583
+  },
+  "counts": {
+    "blank_paper_id": 0,
+    "duplicate_paper_id": 0,
+    "blank_title": 0,
+    "blank_summary": 0,
+    "blank_text_for_embedding": 0,
+    "invalid_published": 0,
+    "invalid_age_days": 0,
+    "stale_rows": 1,
+    "min_summary_chars": 834,
+    "max_summary_chars": 2632,
+    "mean_summary_chars": 1750.67
+  },
+  "thresholds": {
+    "freshness_threshold_days": 180
+  }
+}
