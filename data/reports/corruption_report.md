@@ -6,21 +6,21 @@
 - Repaired retrieval hit rate: 1.0
 - Retrieval hit rate delta corrupted vs baseline: -0.083333
 - Retrieval hit rate delta repaired vs baseline: 0.0
-- Baseline mean token F1: 0.4235907473399701
+- Baseline mean token F1: 0.7569240806733034
 - Corrupted mean token F1: 0.660252909856381
 - Repaired mean token F1: 0.7569240806733034
-- Mean token F1 delta corrupted vs baseline: 0.236662
-- Mean token F1 delta repaired vs baseline: 0.333333
-- Baseline judge accuracy: 0.3333333333333333
-- Corrupted judge accuracy: 0.6388888888888888
-- Repaired judge accuracy: 0.6805555555555556
-- Judge accuracy delta corrupted vs baseline: 0.305556
-- Judge accuracy delta repaired vs baseline: 0.347222
-- Baseline mean judge score: 2.625
+- Mean token F1 delta corrupted vs baseline: -0.096671
+- Mean token F1 delta repaired vs baseline: 0.0
+- Baseline judge accuracy: 0.6666666666666666
+- Corrupted judge accuracy: 0.625
+- Repaired judge accuracy: 0.6666666666666666
+- Judge accuracy delta corrupted vs baseline: -0.041667
+- Judge accuracy delta repaired vs baseline: 0.0
+- Baseline mean judge score: 3.9583333333333335
 - Corrupted mean judge score: 3.7777777777777777
 - Repaired mean judge score: 3.9583333333333335
-- Mean judge score delta corrupted vs baseline: 1.152778
-- Mean judge score delta repaired vs baseline: 1.333333
+- Mean judge score delta corrupted vs baseline: -0.180556
+- Mean judge score delta repaired vs baseline: 0.0
 
 ## Quality Comparison
 - Baseline overall pass: True
