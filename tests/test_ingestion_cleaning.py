@@ -84,9 +84,14 @@ def test_cp1_corruption_rebuilds_embedding_text_and_logs(tmp_path) -> None:
     )
     log_path = tmp_path / "corruption_log.json"
 
+    baseline = clean.copy(deep=True)
     corrupted = corrupt_clean_dataframe(clean, log_path)
     log = json.loads(log_path.read_text(encoding="utf-8"))
 
+    assert clean.equals(baseline)
+    repeated = corrupt_clean_dataframe(clean, tmp_path / "repeated_log.json")
+    assert corrupted.equals(repeated)
+    assert log["seed"] == 42
     assert corrupted["paper_id"].duplicated().any()
     assert corrupted.apply(
         lambda row: row["text_for_embedding"].startswith(f"Title: {row['title']}\nSummary: {row['summary']}"),

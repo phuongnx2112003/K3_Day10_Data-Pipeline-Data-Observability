@@ -174,3 +174,45 @@ check trả `overall_pass: false` và từng check tương ứng đều False. T
 vector index vì traceback contract chỉ tác động artifact giao tiếp
 `cleaned_records.*`; baseline dùng `papers_clean.*`, vốn đã có `age_days` và đủ
 field index. Kiểm thử CP3 đạt 4 tests.
+
+## CP4 - Corruption có chủ đích trên clean data
+
+Đã thao tác trực tiếp trên `src/ingestion/corruption.py` và dùng
+`data/clean/papers_clean.json` làm dữ liệu nạn nhân. Hàm luôn deep-copy đầu vào;
+assertion sau khi chạy xác nhận baseline không bị thay đổi.
+
+Các kịch bản được triển khai và chạy thật với rate 10%:
+
+- Drop 2 records mới nhất để mô phỏng thiếu dữ liệu.
+- Xóa trắng summary của 2 records; log lưu độ dài trước và sau corruption.
+- Sinh chuỗi noise ngẫu nhiên dài 24 ký tự và chèn vào summary của 2 records.
+- Cắt title của 2 records xuống tối đa 12 ký tự; log lưu độ dài ban đầu.
+- Dịch `published` của 2 records lùi 10 năm và tăng `age_days` tương ứng.
+- Thêm 2 duplicate rows để tạo lỗi khóa `paper_id`.
+
+Việc chọn row và tạo noise dùng local random generator với seed mặc định 42.
+Do đó các row/noise có tính ngẫu nhiên nhưng kết quả vẫn tái lập được khi chạy
+baseline/corrupted/repaired trên cùng dữ liệu. Có thể truyền seed khác qua tham
+số keyword nếu muốn tạo một lần thử khác.
+
+Sau khi thay đổi title/summary, code tính lại `summary_chars` và
+`text_for_embedding`, bảo đảm vector index nhận đúng nội dung đã bị corruption
+thay vì embedding text cũ. Log có seed, corruption rate, paper IDs, noise tokens
+và các độ dài trước/sau để audit.
+
+Artifact đã sinh:
+
+- `data/clean/papers_clean_corrupted.csv`
+- `data/clean/papers_clean_corrupted.json`
+- `data/results/corruption_log.json`
+
+Kết quả thực tế: baseline 24 rows; sau drop 2 và add duplicate 2, corrupted có
+24 rows. Kiểm tra artifact thấy đúng 2 summary rỗng, 2 summary có marker noise,
+2 title ngắn tối đa 12 ký tự và baseline input không đổi. Cùng seed tạo lại
+DataFrame giống hệt. Bộ kiểm thử hiện đạt 4 tests.
+
+Quality check trên corrupted artifact trả `overall_pass: false`, bắt được 2
+duplicate IDs, 2 summary rỗng, tổng stale rows tăng từ 1 lên 3 và
+`min_summary_chars` giảm xuống 0. Kết quả được lưu tại
+`data/quality/corrupted_quality.json`, chứng minh anomalies đã đi vào artifact
+thật và được hệ thống quan sát phát hiện.
