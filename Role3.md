@@ -1,5 +1,12 @@
 # Nhật ký công việc của Tác tử (Agent work log)
 
+## Thông tin học viên
+Họ và tên: Lê Công Dũng
+Mã HV: 2202601649
+Lớp: E403
+Ngày hoàn thiện: 06/08/2026
+
+
 ## CP0 - Giao kèo dữ liệu thô sang dữ liệu sạch (Raw to clean data contract)
 
 Được triển khai trong `src/ingestion/cleaning.py`:
@@ -27,7 +34,7 @@ python -m pytest -q tests/test_ingestion_cleaning.py
 
 ```
 
-## Bổ sung luồng đọc và xuất dữ liệu CP0
+## CP1 - Bổ sung luồng đọc và xuất dữ liệu 
 
 Đã bổ sung vào `src/ingestion/cleaning.py`:
 
@@ -62,9 +69,7 @@ $env:PYTHONPATH="src"
 python -c "from ingestion.cleaning import run_raw_to_clean; run_raw_to_clean()"
 ```
 
-## Kết quả chạy trên raw artifact thực tế (2026-08-06)
-
-Đã phát hiện và đọc thành công `data/raw/crossref_records.json`:
+## Kết quả chạy trên raw artifact thực tế
 
 - Kích thước file: 58,291 bytes.
 - Số bản ghi đầu vào: 24.
@@ -73,12 +78,10 @@ python -c "from ingestion.cleaning import run_raw_to_clean; run_raw_to_clean()"
 - Số bản ghi sạch: 24.
 
 Đã sinh hai artifact:
-
 - `data/clean/cleaned_records.csv`
 - `data/clean/cleaned_records.json`
 
 Đối chiếu bản ghi `10.47576/2949-1894.2026.7.7.023` thành công:
-
 - `authors_joined` là `И.В. Ермаков, В.В. Филатов`.
 - `categories_joined` là chuỗi rỗng.
 - `pdf_url` là chuỗi rỗng.
