@@ -12,7 +12,7 @@
 ## 2. Chi tiết kỹ thuật
 - **Embeddings**: Sử dụng mô hình MiniLM-L6-v2, số chiều 384. Vector hóa thành công toàn bộ trường `text_for_embedding` (đã được làm sạch bởi Role 3).
 - **ChromaDB**: Collection `papers-baseline` hoạt động ổn định.
-- **Metric Baseline**: 
+- **Metric Baseline**:
   - `retrieval_hit_rate`: 1.0 (Tìm thấy 100% ID kỳ vọng trong top-k)
   - `mean_token_f1`: 0.423
 

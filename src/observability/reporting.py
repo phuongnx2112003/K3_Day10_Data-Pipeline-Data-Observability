@@ -3,7 +3,25 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from core.utils import write_text
+from core.utils import write_json, write_text
+
+
+def _text(value: Any) -> str:
+    if value is None:
+        return "N/A"
+    return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def _number(value: Any, digits: int = 4) -> str:
+    if isinstance(value, bool) or value is None:
+        return "N/A"
+    if isinstance(value, (int, float)):
+        return f"{value:.{digits}f}" if isinstance(value, float) else str(value)
+    return _text(value)
+
+
+def _status(value: Any) -> str:
+    return "PASS" if value is True else "FAIL" if value is False else "N/A"
 
 
 def generate_phase1_report(
@@ -12,47 +30,179 @@ def generate_phase1_report(
     metrics: dict[str, Any],
     quality: dict[str, Any],
     freshness: dict[str, Any],
+    embedding_audit: dict[str, Any] | None = None,
+    artifact_paths: dict[str, Any] | None = None,
 ) -> None:
-    """Write a concise markdown baseline report."""
-    path = Path(report_path)
-    lines: list[str] = [
-        "# Phase 1 Baseline Report",
-        "",
-        "## Source Summary",
-        f"- Source API: {source_summary.get('source_api', 'N/A')}",
-        f"- Query: {source_summary.get('source_query', 'N/A')}",
-        f"- Filter: {source_summary.get('source_filter', 'N/A')}",
-        f"- Raw records: {source_summary.get('raw_records', 'N/A')}",
-        f"- Clean records: {source_summary.get('clean_records', 'N/A')}",
-        f"- Test set samples: {source_summary.get('test_set_samples', 'N/A')}",
-        f"- Embedding documents: {source_summary.get('embedding_documents', 'N/A')}",
-        "",
-        "## Metrics",
-        f"- Retrieval hit rate: {metrics.get('retrieval_hit_rate', 'N/A')}",
-        f"- Mean token F1: {metrics.get('mean_token_f1', 'N/A')}",
-        f"- Judge accuracy: {metrics.get('judge_accuracy', 'N/A')}",
-        f"- Mean judge score: {metrics.get('mean_judge_score', 'N/A')}",
-        f"- Ragas: {metrics.get('ragas', 'N/A')}",
-        "",
-        "## Data Quality",
-        f"- Total rows: {quality.get('total_rows', 'N/A')}",
-        f"- Missing columns: {quality.get('missing_columns', [])}",
-        f"- Duplicate paper_id: {quality.get('counts', {}).get('duplicate_paper_id', 'N/A')}",
-        f"- Blank summary: {quality.get('counts', {}).get('blank_summary', 'N/A')}",
-        f"- Blank text_for_embedding: {quality.get('counts', {}).get('blank_text_for_embedding', 'N/A')}",
-        f"- Fresh rows ratio: {quality.get('checks', {}).get('fresh_rows_ratio', 'N/A')}",
-        "",
-        "## Freshness",
-        f"- Latest published: {freshness.get('latest_published', 'N/A')}",
-        f"- Oldest published: {freshness.get('oldest_published', 'N/A')}",
-        f"- Stale rows: {freshness.get('stale_rows', 'N/A')}",
-        f"- Freshness threshold days: {freshness.get('freshness_threshold_days', 'N/A')}",
-        f"- Is fresh: {freshness.get('is_fresh', 'N/A')}",
-        "",
-        "## Conclusion",
-        "- Baseline artifacts are ready for downstream corruption and comparison stages.",
+    """Render a baseline Markdown report exclusively from provided artifacts."""
+    content = _build_phase1_report_content(
+        source_summary,
+        metrics,
+        quality,
+        freshness,
+        embedding_audit=embedding_audit,
+        artifact_paths=artifact_paths,
+    )
+    write_text(Path(report_path), content)
+
+
+def _build_phase1_report_content(
+    source_summary: dict[str, Any],
+    metrics: dict[str, Any],
+    quality: dict[str, Any],
+    freshness: dict[str, Any],
+    embedding_audit: dict[str, Any] | None = None,
+    artifact_paths: dict[str, Any] | None = None,
+) -> str:
+    source_rows = [
+        f"| `{_text(key)}` | {_text(value)} |" for key, value in source_summary.items()
+    ] or ["| `status` | No source summary provided |"]
+
+    metric_names = (
+        "samples",
+        "retrieval_hit_rate",
+        "mean_token_f1",
+        "judge_accuracy",
+        "mean_judge_score",
+    )
+    metric_rows = [
+        f"| `{name}` | {_number(metrics.get(name))} |" for name in metric_names
     ]
-    write_text(path, "\n".join(lines).rstrip() + "\n")
+
+    quality_rows = []
+    for check in quality.get("check_results", []):
+        quality_rows.append(
+            "| `{}` | {} | {} | {} |".format(
+                _text(check.get("name")),
+                _text(check.get("observed")),
+                _text(check.get("expected")),
+                _status(check.get("success")),
+            )
+        )
+    if not quality_rows:
+        quality_rows.append("| `N/A` | N/A | N/A | N/A |")
+
+    ragas = metrics.get("ragas", {})
+    if isinstance(ragas, dict) and "skipped" in ragas:
+        ragas_note = f"Skipped: {_text(ragas['skipped'])}"
+    elif isinstance(ragas, dict) and "error" in ragas:
+        ragas_note = f"Error: {_text(ragas['error'])}"
+    else:
+        ragas_note = _text(ragas)
+
+    embedding_audit = embedding_audit or {}
+    embedding_rows = [
+        f"| Backend | {_text(embedding_audit.get('backend'))} |",
+        f"| Model | {_text(embedding_audit.get('embedding_model'))} |",
+        f"| Collection | `{_text(embedding_audit.get('collection_name'))}` |",
+        f"| Indexed documents | {_number(embedding_audit.get('document_count'))} |",
+        f"| Clean rows | {_number(embedding_audit.get('clean_row_count'))} |",
+        f"| Audit status | {_status(embedding_audit.get('success'))} |",
+    ]
+    evidence_rows = [
+        f"- `{_text(name)}`: `{_text(path)}`" for name, path in (artifact_paths or {}).items()
+    ] or ["- No artifact paths provided."]
+
+    return "\n".join(
+        [
+            "# Phase 1 — Baseline Observability Report",
+            "",
+            "> Generated from source, metrics, quality, and freshness payloads. No values are hard-coded.",
+            "",
+            "## Source summary",
+            "",
+            "| Field | Value |",
+            "| --- | --- |",
+            *source_rows,
+            "",
+            "## RAG evaluation metrics",
+            "",
+            "| Metric | Value |",
+            "| --- | ---: |",
+            *metric_rows,
+            "",
+            f"Ragas: {ragas_note}",
+            "",
+            "## Data quality",
+            "",
+            f"Overall status: **{_status(quality.get('success'))}**",
+            "",
+            "| Check | Observed | Expected | Status |",
+            "| --- | ---: | --- | --- |",
+            *quality_rows,
+            "",
+            "## Freshness",
+            "",
+            f"Overall status: **{_status(freshness.get('is_fresh'))}**",
+            "",
+            "| Signal | Value |",
+            "| --- | ---: |",
+            f"| Source timestamp | `{_text(freshness.get('source_timestamp_column'))}` |",
+            f"| Threshold days | {_number(freshness.get('threshold_days'))} |",
+            f"| Latest published | {_text(freshness.get('latest_published'))} |",
+            f"| Oldest published | {_text(freshness.get('oldest_published'))} |",
+            f"| Stale rows | {_number(freshness.get('stale_rows'))} |",
+            f"| Stale ratio | {_number(freshness.get('stale_ratio'))} |",
+            f"| Invalid timestamps | {_number(freshness.get('invalid_timestamp_rows'))} |",
+            f"| Invalid age values | {_number(freshness.get('invalid_age_days_rows'))} |",
+            "",
+            "## Embedding audit",
+            "",
+            "| Signal | Value |",
+            "| --- | --- |",
+            *embedding_rows,
+            "",
+            "## Evidence artifacts",
+            "",
+            *evidence_rows,
+            "",
+            "## Interpretation guardrail",
+            "",
+            "This baseline is the comparison point for corrupted and repaired data. "
+            "A later report must use the same test set and must not claim degradation or recovery "
+            "unless the corresponding artifacts show it.",
+            "",
+        ]
+    )
+
+
+def validate_phase1_report(
+    report_path,
+    validation_output_path,
+    source_summary: dict[str, Any],
+    metrics: dict[str, Any],
+    quality: dict[str, Any],
+    freshness: dict[str, Any],
+    embedding_audit: dict[str, Any] | None = None,
+    artifact_paths: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Verify that the Markdown report exactly matches its source payloads."""
+    path = Path(report_path)
+    expected = _build_phase1_report_content(
+        source_summary,
+        metrics,
+        quality,
+        freshness,
+        embedding_audit=embedding_audit,
+        artifact_paths=artifact_paths,
+    )
+    actual = path.read_text(encoding="utf-8") if path.is_file() else None
+    required_metrics = (
+        "samples",
+        "retrieval_hit_rate",
+        "mean_token_f1",
+        "judge_accuracy",
+        "mean_judge_score",
+    )
+    missing_metrics = [name for name in required_metrics if metrics.get(name) is None]
+    payload = {
+        "report_path": str(path),
+        "report_exists": path.is_file(),
+        "content_matches_payloads": actual == expected,
+        "missing_metrics": missing_metrics,
+        "success": path.is_file() and actual == expected and not missing_metrics,
+    }
+    write_json(Path(validation_output_path), payload)
+    return payload
 
 
 def generate_corruption_report(
@@ -126,3 +276,92 @@ def generate_corruption_report(
         "- Baseline should remain untouched while corrupted and repaired artifacts are rebuilt separately.",
     ]
     write_text(path, "\n".join(lines).rstrip() + "\n")
+
+
+def generate_recovery_comparison_report(
+    report_path,
+    comparison: dict[str, Any],
+) -> None:
+    """Render the CP6 baseline/corrupted/repaired comparison from measured data."""
+    signal_rows = [
+        "| `{}` | {} | {} | {} | {} |".format(
+            _text(name),
+            _number(values.get("baseline")),
+            _number(values.get("corrupted")),
+            _number(values.get("repaired")),
+            _text(values.get("outcome")),
+        )
+        for name, values in comparison.get("signal_comparison", {}).items()
+    ] or ["| `N/A` | N/A | N/A | N/A | N/A |"]
+    metric_rows = [
+        "| `{}` | {} | {} | {} | {} | {} |".format(
+            _text(name),
+            _number(values.get("baseline")),
+            _number(values.get("corrupted")),
+            _number(values.get("repaired")),
+            _number(values.get("repaired_delta")),
+            _text(values.get("outcome")),
+        )
+        for name, values in comparison.get("metric_comparison", {}).items()
+    ] or ["| `N/A` | N/A | N/A | N/A | N/A | N/A |"]
+    status_rows = [
+        "| {} | {} | {} | {} |".format(
+            _text(label),
+            _status(values.get("baseline")),
+            _status(values.get("corrupted")),
+            _status(values.get("repaired")),
+        )
+        for label, values in comparison.get("status_comparison", {}).items()
+    ] or ["| N/A | N/A | N/A | N/A |"]
+    evidence_rows = [
+        f"- `{_text(name)}`: `{_text(path)}`"
+        for name, path in comparison.get("artifacts", {}).items()
+    ] or ["- No artifact paths provided."]
+    limitation_rows = [
+        f"- {_text(item)}" for item in comparison.get("limitations", [])
+    ] or ["- No remaining limitation was recorded."]
+    conclusion_rows = [
+        f"- {_text(item)}" for item in comparison.get("conclusions", [])
+    ] or ["- No conclusion was recorded."]
+
+    content = "\n".join(
+        [
+            "# Phase 2 — Recovery Comparison Report",
+            "",
+            "> Generated from baseline, corrupted, and repaired metrics/quality/freshness artifacts.",
+            "",
+            f"Overall recovery status: **{_text(comparison.get('recovery_status')).upper()}**",
+            "",
+            "## Quality and freshness signals",
+            "",
+            "| Signal | Baseline | Corrupted | Repaired | Recovery outcome |",
+            "| --- | ---: | ---: | ---: | --- |",
+            *signal_rows,
+            "",
+            "## Evaluation metrics",
+            "",
+            "| Metric | Baseline | Corrupted | Repaired | Repaired − baseline | Recovery outcome |",
+            "| --- | ---: | ---: | ---: | ---: | --- |",
+            *metric_rows,
+            "",
+            "## Status comparison",
+            "",
+            "| Status | Baseline | Corrupted | Repaired |",
+            "| --- | --- | --- | --- |",
+            *status_rows,
+            "",
+            "## Evidence-based conclusions",
+            "",
+            *conclusion_rows,
+            "",
+            "## Limits of the conclusion",
+            "",
+            *limitation_rows,
+            "",
+            "## Evidence artifacts",
+            "",
+            *evidence_rows,
+            "",
+        ]
+    )
+    write_text(Path(report_path), content)

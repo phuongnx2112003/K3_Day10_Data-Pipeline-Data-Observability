@@ -1,11 +1,17 @@
 {
-  "generated_at": "2026-08-06T05:00:11.975407Z",
-  "total_rows": 24,
+  "generated_at": "2026-08-06T05:33:23.345981Z",
+  "generated_at_utc": "2026-08-06T05:33:23.345981+00:00",
+  "source_timestamp_column": "published",
+  "age_column": "age_days",
+  "threshold_days": 180,
+  "freshness_threshold_days": 180,
   "latest_published": "2026-08-05",
   "oldest_published": "2026-01-25",
   "stale_rows": 1,
   "fresh_rows": 23,
-  "freshness_threshold_days": 180,
-  "stale_ratio": 0.0417,
+  "total_rows": 24,
+  "stale_ratio": 0.041666666666666664,
+  "invalid_timestamp_rows": 0,
+  "invalid_age_days_rows": 0,
   "is_fresh": false
 }

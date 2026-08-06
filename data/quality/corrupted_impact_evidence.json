@@ -1,0 +1,148 @@
+{
+  "state": "baseline_vs_corrupted",
+  "corruption_log": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corruption_log.json",
+  "signal_deltas": {
+    "row_count": {
+      "baseline": 24,
+      "corrupted": 24,
+      "delta": 0.0,
+      "direction": "unchanged"
+    },
+    "null_paper_id_rows": {
+      "baseline": 0,
+      "corrupted": 0,
+      "delta": 0.0,
+      "direction": "unchanged"
+    },
+    "duplicate_paper_id_rows": {
+      "baseline": 0,
+      "corrupted": 4,
+      "delta": 4.0,
+      "direction": "increase"
+    },
+    "missing_title_rows": {
+      "baseline": 0,
+      "corrupted": 0,
+      "delta": 0.0,
+      "direction": "unchanged"
+    },
+    "invalid_summary_rows": {
+      "baseline": 0,
+      "corrupted": 2,
+      "delta": 2.0,
+      "direction": "increase"
+    },
+    "invalid_age_days_rows": {
+      "baseline": 0,
+      "corrupted": 0,
+      "delta": 0.0,
+      "direction": "unchanged"
+    },
+    "stale_rows": {
+      "baseline": 1,
+      "corrupted": 3,
+      "delta": 2.0,
+      "direction": "increase"
+    },
+    "stale_ratio": {
+      "baseline": 0.041666666666666664,
+      "corrupted": 0.125,
+      "delta": 0.08333333333333334,
+      "direction": "increase"
+    }
+  },
+  "metric_deltas": {
+    "retrieval_hit_rate": {
+      "baseline": 1.0,
+      "corrupted": 0.9166666666666666,
+      "delta": -0.08333333333333337,
+      "direction": "decrease"
+    },
+    "mean_token_f1": {
+      "baseline": 0.7569240806733034,
+      "corrupted": 0.660252909856381,
+      "delta": -0.09667117081692245,
+      "direction": "decrease"
+    },
+    "judge_accuracy": {
+      "baseline": 0.6805555555555556,
+      "corrupted": 0.625,
+      "delta": -0.05555555555555558,
+      "direction": "decrease"
+    },
+    "mean_judge_score": {
+      "baseline": 3.9583333333333335,
+      "corrupted": 3.7777777777777777,
+      "delta": -0.1805555555555558,
+      "direction": "decrease"
+    }
+  },
+  "event_evidence": [
+    {
+      "event": "latest_drop",
+      "log_present": true,
+      "affected_records": 2,
+      "affected_test_questions": 6,
+      "observed_metric": "retrieval_hit_rate",
+      "metric_delta": -0.08333333333333337,
+      "supported": true
+    },
+    {
+      "event": "missing_summary",
+      "log_present": true,
+      "observed_signal": "invalid_summary_rows",
+      "signal_delta": 2.0,
+      "supported": true
+    },
+    {
+      "event": "summary_noise",
+      "log_present": true,
+      "observed_signal": null,
+      "supported": false,
+      "reason": "No direct noise-marker quality check; aggregate metric changes cannot isolate this event."
+    },
+    {
+      "event": "truncate_title",
+      "log_present": true,
+      "observed_signal": "missing_title_rows",
+      "signal_delta": 0.0,
+      "supported": false,
+      "reason": "Titles remain non-blank, so the current missing-title check does not detect truncation."
+    },
+    {
+      "event": "old_date",
+      "log_present": true,
+      "observed_signal": "stale_rows",
+      "signal_delta": 2.0,
+      "supported": true
+    },
+    {
+      "event": "duplicate",
+      "log_present": true,
+      "observed_signal": "duplicate_paper_id_rows",
+      "signal_delta": 4.0,
+      "supported": true
+    }
+  ],
+  "unchanged_signals": [
+    "row_count",
+    "null_paper_id_rows",
+    "missing_title_rows",
+    "invalid_age_days_rows"
+  ],
+  "guarded_conclusions": [
+    "Structural data quality worsened: duplicate IDs and invalid summaries increased.",
+    "Freshness worsened because stale row count and stale ratio increased.",
+    "Metrics below baseline: retrieval_hit_rate, mean_token_f1, judge_accuracy, mean_judge_score.",
+    "Aggregate metric changes cannot be attributed to one corruption event without an isolated experiment.",
+    "Noise and title truncation are not directly detected by the current quality checks."
+  ],
+  "artifacts": {
+    "quality": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\quality\\corrupted_quality.json",
+    "freshness": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\quality\\corrupted_freshness.json",
+    "embedding_audit": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\quality\\corrupted_embedding_audit.json",
+    "snapshot": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\quality\\corrupted_observability_snapshot.json",
+    "corrupted_metrics": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corrupted_metrics.json",
+    "corrupted_answers": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corrupted_answers.json"
+  }
+}
