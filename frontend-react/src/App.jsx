@@ -369,14 +369,14 @@ export default function App() {
                     <td><strong>Mean Token F1 Score</strong></td>
                     <td style={{ color: '#10b981', fontWeight: 800 }}>0.84</td>
                     <td style={{ color: '#ef4444', fontWeight: 800 }}>0.31</td>
-                    <td style={{ color: '#10b981', fontWeight 800 }}>0.83</td>
+                    <td style={{ color: '#10b981', fontWeight: 800 }}>0.83</td>
                     <td><span className="badge-soft badge-green">+0.52 Phục hồi</span></td>
                   </tr>
                   <tr>
                     <td><strong>LLM Judge Accuracy</strong></td>
                     <td style={{ color: '#10b981', fontWeight: 800 }}>95.0%</td>
                     <td style={{ color: '#ef4444', fontWeight: 800 }}>52.0%</td>
-                    <td style={{ color: '#10b981', fontWeight 800 }}>94.5%</td>
+                    <td style={{ color: '#10b981', fontWeight: 800 }}>94.5%</td>
                     <td><span className="badge-soft badge-green">+42.5% Phục hồi</span></td>
                   </tr>
                 </tbody>
