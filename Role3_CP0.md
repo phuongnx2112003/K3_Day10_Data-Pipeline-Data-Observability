@@ -61,3 +61,31 @@ Lệnh chạy khi raw artifact sẵn sàng:
 $env:PYTHONPATH="src"
 python -c "from ingestion.cleaning import run_raw_to_clean; run_raw_to_clean()"
 ```
+
+## Kết quả chạy trên raw artifact thực tế (2026-08-06)
+
+Đã phát hiện và đọc thành công `data/raw/crossref_records.json`:
+
+- Kích thước file: 58,291 bytes.
+- Số bản ghi đầu vào: 24.
+- Bản ghi bị loại do thiếu `paper_id`, `title` hoặc ngày hợp lệ: 0.
+- Bản ghi bị loại do trùng `paper_id`: 0.
+- Số bản ghi sạch: 24.
+
+Đã sinh hai artifact:
+
+- `data/clean/cleaned_records.csv`
+- `data/clean/cleaned_records.json`
+
+Đối chiếu bản ghi `10.47576/2949-1894.2026.7.7.023` thành công:
+
+- `authors_joined` là `И.В. Ермаков, В.В. Филатов`.
+- `categories_joined` là chuỗi rỗng.
+- `pdf_url` là chuỗi rỗng.
+- `published` là `2026-06-17`; tại ngày chạy `2026-08-06`, `age_days = 50`
+  trong DataFrame vận hành.
+- `text_for_embedding` chứa đúng Title, Authors và Summary từ raw record.
+
+Kiểm tra artifact xác nhận đủ 24 dòng, `paper_id` duy nhất, ba trường cốt lõi
+không rỗng, Unicode được giữ nguyên, và output chỉ có đúng 9 cột target. Bộ test
+tự động tiếp tục đạt `3 passed`.
