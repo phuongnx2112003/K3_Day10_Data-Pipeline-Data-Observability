@@ -1,0 +1,20 @@
+{
+  "status": "complete",
+  "required_inputs": {
+    "corrupted_clean_csv": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\clean\\papers_clean_corrupted.csv",
+    "corruption_log": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corruption_log.json",
+    "corrupted_metrics": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corrupted_metrics.json",
+    "corrupted_answers": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\corrupted_answers.json",
+    "corrupted_embedding_manifest": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings_corrupted.json",
+    "baseline_snapshot": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\quality\\baseline_observability_snapshot.json",
+    "baseline_metrics": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\results\\baseline_metrics.json",
+    "test_set": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\eval\\test_set.json"
+  },
+  "missing_inputs": [],
+  "quality_generated": true,
+  "freshness_generated": true,
+  "evidence_generated": true,
+  "metrics_samples": 72,
+  "answers_count": 72,
+  "metrics_samples_match_answers": true
+}
