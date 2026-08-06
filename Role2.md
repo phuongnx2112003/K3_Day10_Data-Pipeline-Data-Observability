@@ -72,3 +72,20 @@
    - Đã kiểm tra logic điều phối trong file `src/pipelines/phase1.py` (hàm `_load_raw_records`).
    - Luồng code đang áp dụng rule caching an toàn: chỉ gọi API bằng `fetch_source_records` nếu file json chưa tồn tại hoặc cờ `settings.refresh_source` đang bật.
    - Nhờ cơ chế này, quá trình chạy Phase 1 (Baseline) và các phase phía sau luôn khóa chặt (lock) nguồn dữ liệu, bảo đảm metrics baseline không tự nhiên bị thay đổi do dữ liệu trên Crossref cập nhật thêm bài viết mới.
+
+## CP 5: Bàn giao cho Corrupted Flow (Mốc: Data Protection & Repairability)
+
+1. **Xác nhận raw nguồn nguyên vẹn trước khi corrupt clean data**:
+   - Trong quá trình gọi `corrupt_clean_dataframe()` (tại `src/pipelines/corruption_flow.py`), script chỉ thao tác trên bản sao bộ nhớ (dataframe) của file `data/clean/papers_clean.json`.
+   - File gốc `data/raw/crossref_records.json` (chứa dữ liệu nguyên thủy) hoàn toàn không bị touch, read/write đè lên hay modify. Do đó, dù data downstream có bị nhiễu loạn hay xóa mất trường, dữ liệu thô ban đầu vẫn được bảo vệ 100%.
+
+2. **Chọn record có lineage rõ để chứng minh có thể repair**:
+   - Sử dụng lại record mẫu: `paper_id = "10.47576/2949-1894.2026.7.7.023"`.
+   - Ngay cả khi bản ghi này bị mất `title`, abstract bị nhiễu ký tự lạ, hay ngày tháng biến thành NaN trong file `papers_clean_corrupted.csv`, thì hệ thống hoàn toàn có thể sửa chữa (Repair) bằng cách gọi lại: 
+     `repaired_df = build_clean_dataframe(raw_records, now_utc())`
+   - Nhờ sự tồn tại của `paper_id` chuẩn làm cầu nối, Pipeline map ngược được về bản ghi nguyên gốc trong Raw Snapshot để khôi phục (re-clean) mà không cần đoán mò.
+
+3. **Kiểm tra corrupted flow không fetch nguồn mới làm comparison mất công bằng**:
+   - Em đã review `src/pipelines/corruption_flow.py` và xác nhận script hoàn toàn **KHÔNG CÓ** hàm `fetch_source_records()`.
+   - Hàm duy nhất được gọi để load lại dữ liệu phục hồi là `load_raw_records(settings.paths.raw_records_json)`. 
+   - Điều này triệt tiêu rủi ro tải nhầm bản ghi mới từ Crossref. Data baseline và Data repaired sẽ có số lượng base records y hệt nhau, đảm bảo tính công bằng (apples-to-apples) tuyệt đối khi so sánh Metrics (Hit Rate, F1, Accuracy) trên biểu đồ/Report cuối cùng.
