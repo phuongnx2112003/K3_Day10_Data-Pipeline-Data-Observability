@@ -26,6 +26,9 @@ export default function App() {
   const [selectedPaper, setSelectedPaper] = useState(null);
   const [inputQuestion, setInputQuestion] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dbState, setDbState] = useState('repaired');
+  const [corpusState, setCorpusState] = useState('repaired');
+  const [obsState, setObsState] = useState('repaired');
 
   const [messages, setMessages] = useState(() => {
     const saved = localStorage.getItem('aura-chat-history');
@@ -57,14 +60,20 @@ export default function App() {
   ];
 
   useEffect(() => {
-    fetchPapers();
+    fetchPapers(corpusState);
+  }, [corpusState]);
+
+  useEffect(() => {
+    fetchObs(obsState);
+  }, [obsState]);
+
+  useEffect(() => {
     fetchMetrics();
-    fetchObs();
   }, []);
 
-  const fetchPapers = async () => {
+  const fetchPapers = async (stateVal) => {
     try {
-      const res = await fetch('http://localhost:8000/api/papers');
+      const res = await fetch(`http://localhost:8000/api/papers?state=${stateVal}`);
       if (res.ok) {
         const data = await res.json();
         setPapers(data);
@@ -85,9 +94,9 @@ export default function App() {
     }
   };
 
-  const fetchObs = async () => {
+  const fetchObs = async (stateVal) => {
     try {
-      const res = await fetch('http://localhost:8000/api/observability');
+      const res = await fetch(`http://localhost:8000/api/observability?state=${stateVal}`);
       if (res.ok) {
         setObs(await res.json());
       }
@@ -108,7 +117,7 @@ export default function App() {
       const res = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q })
+        body: JSON.stringify({ question: q, db_state: dbState })
       });
 
       if (res.ok) {
@@ -125,7 +134,7 @@ export default function App() {
       setTimeout(() => {
         setMessages(prev => [...prev, {
           sender: 'bot',
-          text: `Dựa trên corpus Crossref đã nhúng:\n\nBài báo **SafeRAG** đề xuất mô hình RAG đa giai đoạn kết hợp LLM để tự động phân tích sự cố và tạo báo cáo an toàn trong ngành Dầu khí.`,
+          text: `Dựa trên corpus Crossref đã nhúng (${dbState}):\n\nBài báo **SafeRAG** đề xuất mô hình RAG đa giai đoạn kết hợp LLM để tự động phân tích sự cố và tạo báo cáo an toàn trong ngành Dầu khí.`,
           sources: [{ paper_id: '10.2118/234689-pa', title: 'SafeRAG Multistage Framework' }]
         }]);
         setLoading(false);
@@ -235,7 +244,27 @@ export default function App() {
                   <Sparkles size={20} color="#00f2fe" />
                   <span style={{ fontWeight: 800, fontSize: '15px', color: '#fff' }}>Conversational Intelligence Studio</span>
                 </div>
-                <span className="neon-badge">MiniLM-L6-v2</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <select 
+                    value={dbState} 
+                    onChange={(e) => setDbState(e.target.value)}
+                    style={{
+                      background: '#0f172a',
+                      color: '#f8fafc',
+                      border: '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '4px 8px',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    <option value="baseline">Baseline</option>
+                    <option value="corrupted">Corrupted</option>
+                    <option value="repaired">Repaired</option>
+                  </select>
+                  <span className="neon-badge">MiniLM-L6-v2</span>
+                </div>
               </div>
 
               <div className="chat-cyber-messages">
@@ -333,11 +362,36 @@ export default function App() {
         )}
 
         {/* Tab 2: Observability */}
-        {activeTab === 'obs' && (
-          <div className="cyber-panel">
-            <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', marginBottom: '6px' }}>Data Quality & Freshness Audit</h2>
-            <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px' }}>Giám sát trạng thái pipeline dữ liệu theo các quy tắc Observability.</p>
-
+        {activeTab === 'obs' && obs && (
+          <div className="tab-pane active fade-in" style={{ height: '100%', overflowY: 'auto', paddingBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <h2>Data Observability Dashboard</h2>
+                <p style={{ color: '#94a3b8' }}>Giám sát chất lượng dữ liệu bằng Great Expectations</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '0.9rem', color: '#94a3b8' }}>Observability State:</span>
+                <select 
+                  value={obsState} 
+                  onChange={(e) => setObsState(e.target.value)}
+                  style={{
+                    background: '#0f172a',
+                    color: '#f8fafc',
+                    border: '1px solid #10b981',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  <option value="baseline">Baseline (Sạch gốc)</option>
+                  <option value="corrupted">Corrupted (Bị làm hỏng)</option>
+                  <option value="repaired">Repaired (Đã phục hồi)</option>
+                </select>
+              </div>
+            </div>
+            
             <table className="cyber-table">
               <thead>
                 <tr>
@@ -417,8 +471,30 @@ export default function App() {
         {/* Tab 4: Corpus */}
         {activeTab === 'corpus' && (
           <div>
-            <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', marginBottom: '24px' }}>Academic Paper Corpus Explorer</h2>
-            
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', margin: 0 }}>Academic Paper Corpus Explorer</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '0.9rem', color: '#94a3b8' }}>Corpus State:</span>
+                <select 
+                  value={corpusState} 
+                  onChange={(e) => setCorpusState(e.target.value)}
+                  style={{
+                    background: '#0f172a',
+                    color: '#f8fafc',
+                    border: '1px solid #10b981',
+                    borderRadius: '8px',
+                    padding: '6px 12px',
+                    outline: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  <option value="baseline">Baseline (Sạch gốc)</option>
+                  <option value="corrupted">Corrupted (Bị làm hỏng)</option>
+                  <option value="repaired">Repaired (Đã phục hồi)</option>
+                </select>
+              </div>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
               {papers.map((p, idx) => (
                 <div key={idx} className="paper-glass-item" onClick={() => setSelectedPaper(p)}>

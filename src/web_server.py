@@ -16,28 +16,38 @@ PORT = 8000
 FRONTEND_DIR = root_dir / "frontend"
 
 settings = load_settings()
-index_cache = None
-agent_cache = None
+import dataclasses
 
-def get_index():
-    global index_cache
-    if index_cache is None:
+index_caches = {}
+agent_caches = {}
+
+def get_index(db_state='baseline'):
+    if db_state not in index_caches:
         try:
-            index_cache = LocalEmbeddingIndex.load(settings)
+            # Map db_state to the actual collection name
+            col_name = {
+                'baseline': settings.baseline_collection_name,
+                'corrupted': settings.corrupted_collection_name,
+                'repaired': settings.repaired_collection_name
+            }.get(db_state, settings.baseline_collection_name)
+            
+            custom_settings = dataclasses.replace(settings, baseline_collection_name=col_name)
+            index_caches[db_state] = LocalEmbeddingIndex.load(custom_settings)
         except Exception as e:
-            print(f"Could not load index: {e}")
-    return index_cache
+            print(f"Could not load index for {db_state}: {e}")
+            return None
+    return index_caches[db_state]
 
-def get_agent():
-    global agent_cache
-    if agent_cache is None:
-        idx = get_index()
+def get_agent(db_state='baseline'):
+    if db_state not in agent_caches:
+        idx = get_index(db_state)
         if idx:
             try:
-                agent_cache = build_agent(settings, idx)
+                agent_caches[db_state] = build_agent(settings, idx)
             except Exception as e:
-                print(f"Could not build agent: {e}")
-    return agent_cache
+                print(f"Could not build agent for {db_state}: {e}")
+                return None
+    return agent_caches.get(db_state)
 
 class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -54,13 +64,24 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path == "/api/papers":
+        from urllib.parse import urlparse, parse_qs
+        parsed_path = urlparse(self.path)
+        
+        if parsed_path.path == "/api/papers":
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             
-            # Đổi sang đọc file repaired để demo
-            clean_json_path = root_dir / "data" / "clean" / "papers_clean_repaired.json"
+            query_params = parse_qs(parsed_path.query)
+            state = query_params.get('state', ['repaired'])[0]
+            
+            if state == 'baseline':
+                clean_json_path = settings.paths.clean_json
+            elif state == 'corrupted':
+                clean_json_path = settings.paths.corrupted_clean_json
+            else:
+                clean_json_path = settings.paths.repaired_clean_json
+                
             if clean_json_path.exists():
                 with open(clean_json_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
@@ -78,24 +99,36 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 return json.load(open(p, 'r')) if Path(p).exists() else {}
                 
             data = {
-                "baseline": load_json(settings.paths.results_dir / "baseline_metrics.json"),
-                "corrupted": load_json(settings.paths.results_dir / "corrupted_metrics.json"),
-                "repaired": load_json(settings.paths.results_dir / "repaired_metrics.json")
+                "baseline": load_json(settings.paths.baseline_metrics),
+                "corrupted": load_json(settings.paths.corrupted_metrics),
+                "repaired": load_json(settings.paths.repaired_metrics)
             }
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
             
-        elif self.path == "/api/observability":
+        elif self.path.startswith("/api/observability"):
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             
+            from urllib.parse import urlparse, parse_qs
+            parsed_path = urlparse(self.path)
+            query_params = parse_qs(parsed_path.query)
+            state = query_params.get('state', ['repaired'])[0]
+            
             def load_json(p):
                 return json.load(open(p, 'r')) if Path(p).exists() else {}
                 
+            q_file = settings.paths.quality_dir / f"{state}_quality.json"
+            f_file = settings.paths.quality_dir / f"{state}_freshness.json"
+            
+            # fallback to freshness_report.json if specific state not found
+            if not f_file.exists():
+                f_file = settings.paths.freshness_report
+                
             data = {
-                "quality": load_json(settings.paths.quality_dir / "repaired_quality.json"),
-                "freshness": load_json(settings.paths.quality_dir / "repaired_freshness.json")
+                "quality": load_json(q_file),
+                "freshness": load_json(f_file)
             }
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
@@ -108,9 +141,10 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             body = self.rfile.read(content_length)
             payload = json.loads(body.decode('utf-8'))
             question = payload.get("question", "")
+            db_state = payload.get("db_state", "baseline")
             
-            agent = get_agent()
-            idx = get_index()
+            agent = get_agent(db_state)
+            idx = get_index(db_state)
             
             sources = []
             if idx:
