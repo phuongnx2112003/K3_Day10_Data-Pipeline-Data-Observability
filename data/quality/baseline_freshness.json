@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-06T05:33:23.345981Z",
-  "generated_at_utc": "2026-08-06T05:33:23.345981+00:00",
+  "generated_at": "2026-08-06T05:31:02.546611Z",
+  "generated_at_utc": "2026-08-06T05:31:02.546611+00:00",
   "source_timestamp_column": "published",
   "age_column": "age_days",
   "threshold_days": 180,

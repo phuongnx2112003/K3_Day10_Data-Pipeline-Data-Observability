@@ -1,0 +1,148 @@
+{
+  "checkpoint": 4,
+  "role": 6,
+  "state": "forecast_before_corruption",
+  "observed_corrupted_data": false,
+  "baseline_artifact": "data/quality/baseline_observability_snapshot.json",
+  "corruption_contract": "src/ingestion/corruption.py",
+  "assumptions": {
+    "baseline_rows": 24,
+    "drop_latest_rows": 2,
+    "rows_after_drop": 22,
+    "scenario_rows": 2,
+    "duplicate_rows_added": 2,
+    "expected_final_rows": 24,
+    "same_test_set_samples": 72
+  },
+  "expected_events": [
+    {
+      "type": "drop_latest",
+      "affected_rows": 2,
+      "expected_signal": "latest_published moves backward",
+      "expected_rag_effect": "six test questions lose their ground-truth documents"
+    },
+    {
+      "type": "blank_summary",
+      "affected_rows_before_duplication": 2,
+      "expected_signal": "invalid_summary_rows increases"
+    },
+    {
+      "type": "summary_noise",
+      "affected_rows": 2,
+      "expected_signal": "no direct quality check currently detects the noise marker"
+    },
+    {
+      "type": "truncate_title",
+      "affected_rows": 2,
+      "expected_signal": "missing_title_rows remains zero because titles are short but non-blank"
+    },
+    {
+      "type": "stale_published",
+      "affected_rows": 2,
+      "expected_signal": "stale_rows increases and oldest_published moves back about ten years"
+    },
+    {
+      "type": "duplicate_rows",
+      "affected_source_rows": 2,
+      "rows_added": 2,
+      "expected_signal": "duplicate_paper_id_rows increases"
+    }
+  ],
+  "signal_forecast": {
+    "row_count": {
+      "baseline": 24,
+      "expected_corrupted": 24,
+      "direction": "unchanged",
+      "reason": "two dropped rows are offset by two added duplicates"
+    },
+    "null_paper_id_rows": {
+      "baseline": 0,
+      "expected_corrupted": 0,
+      "direction": "unchanged"
+    },
+    "duplicate_paper_id_rows": {
+      "baseline": 0,
+      "expected_corrupted": 4,
+      "direction": "increase",
+      "reason": "keep=False counts each original and duplicated occurrence"
+    },
+    "missing_title_rows": {
+      "baseline": 0,
+      "expected_corrupted": 0,
+      "direction": "unchanged",
+      "gap": "current checks do not detect non-blank truncated titles"
+    },
+    "invalid_summary_rows": {
+      "baseline": 0,
+      "expected_corrupted": 4,
+      "direction": "increase",
+      "reason": "two blank-summary rows are later duplicated"
+    },
+    "invalid_age_days_rows": {
+      "baseline": 0,
+      "expected_corrupted": 0,
+      "direction": "unchanged",
+      "reason": "stale ages remain numeric and non-negative"
+    },
+    "stale_rows": {
+      "baseline": 1,
+      "expected_corrupted": 3,
+      "direction": "increase"
+    },
+    "stale_ratio": {
+      "baseline": 0.041666666666666664,
+      "expected_corrupted": 0.125,
+      "direction": "increase"
+    },
+    "latest_published": {
+      "baseline": "2026-08-05",
+      "expected_corrupted": "2026-07-13",
+      "direction": "older"
+    },
+    "oldest_published": {
+      "baseline": "2026-01-25",
+      "expected_corrupted": "2016-06-17",
+      "direction": "older"
+    },
+    "quality_overall_pass": {
+      "baseline": true,
+      "expected_corrupted": false,
+      "direction": "pass_to_fail"
+    },
+    "freshness_is_fresh": {
+      "baseline": false,
+      "expected_corrupted": false,
+      "direction": "unchanged_status_but_worse_counts"
+    }
+  },
+  "rag_metric_forecast": {
+    "retrieval_hit_rate": {
+      "baseline": 1.0,
+      "expected_upper_bound": 0.9166666666666666,
+      "direction": "decrease_or_equal_to_upper_bound",
+      "reason": "six of 72 questions target the two documents removed from the index"
+    },
+    "mean_token_f1": {
+      "baseline": 0.4235907473399701,
+      "direction": "expected_decrease",
+      "claim_status": "prediction_only"
+    },
+    "judge_accuracy": {
+      "baseline": 0.3333333333333333,
+      "direction": "expected_non_increase",
+      "claim_status": "prediction_only"
+    },
+    "mean_judge_score": {
+      "baseline": 2.625,
+      "direction": "expected_non_increase",
+      "claim_status": "prediction_only"
+    }
+  },
+  "observability_gaps": [
+    "Row count alone cannot detect balanced drop-plus-duplicate corruption.",
+    "No current check detects the explicit CORRUPTED_NOISE marker.",
+    "No current check detects title truncation when the title remains non-blank.",
+    "Freshness status is already false at baseline, so stale_rows and stale_ratio must be compared instead of status alone."
+  ],
+  "validation_rule_for_cp5": "Replace predictions with observed values only after corrupted quality, freshness, answers, metrics, and corruption log exist."
+}

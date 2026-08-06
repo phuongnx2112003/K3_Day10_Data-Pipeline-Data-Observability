@@ -1,0 +1,85 @@
+{
+  "generated_at_utc": "2026-08-06T05:31:02.549111+00:00",
+  "manifest_path": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\embeddings\\papers_embeddings.json",
+  "backend": "chroma",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "collection_name": "papers-baseline",
+  "expected_collection_name": "papers-baseline",
+  "document_count": 24,
+  "clean_row_count": 24,
+  "manifest_persist_path": "D:\\Vin\\Lab\\B10\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+  "configured_persist_path": "D:\\K3_Day10_Data-Pipeline-Data-Observability\\data\\chroma",
+  "success": false,
+  "passed_checks": 10,
+  "failed_checks": [
+    "persist_path_matches_config"
+  ],
+  "checks": [
+    {
+      "name": "manifest_file_exists",
+      "success": true,
+      "observed": 1,
+      "expected": "1 existing file"
+    },
+    {
+      "name": "backend_is_chroma",
+      "success": true,
+      "observed": 1,
+      "expected": "1"
+    },
+    {
+      "name": "embedding_model_matches_config",
+      "success": true,
+      "observed": 1,
+      "expected": "1"
+    },
+    {
+      "name": "collection_name_matches_baseline_config",
+      "success": true,
+      "observed": 1,
+      "expected": "1"
+    },
+    {
+      "name": "document_count_matches_clean_rows",
+      "success": true,
+      "observed": 24,
+      "expected": "24 documents"
+    },
+    {
+      "name": "record_id_unique",
+      "success": true,
+      "observed": 0,
+      "expected": "0 duplicate rows"
+    },
+    {
+      "name": "paper_id_unique",
+      "success": true,
+      "observed": 0,
+      "expected": "0 duplicate rows"
+    },
+    {
+      "name": "paper_ids_match_clean_data",
+      "success": true,
+      "observed": 0,
+      "expected": "0 differing IDs"
+    },
+    {
+      "name": "required_metadata_present",
+      "success": true,
+      "observed": 0,
+      "expected": "0 invalid documents"
+    },
+    {
+      "name": "persist_path_matches_config",
+      "success": false,
+      "observed": 0,
+      "expected": "1"
+    },
+    {
+      "name": "configured_persist_path_exists",
+      "success": true,
+      "observed": 1,
+      "expected": "1"
+    }
+  ]
+}
