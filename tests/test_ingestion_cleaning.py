@@ -98,13 +98,17 @@ def test_cp1_corruption_rebuilds_embedding_text_and_logs(tmp_path) -> None:
         axis=1,
     ).all()
     assert {event["type"] for event in log["events"]} == {
-        "drop_latest",
-        "blank_summary",
-        "summary_noise",
+        "latest_drop",
+        "missing",
+        "noise",
         "truncate_title",
-        "stale_published",
-        "duplicate_rows",
+        "old_date",
+        "duplicate",
     }
+    assert all(
+        {"record_ids", "type", "parameters", "before_count", "after_count"}.issubset(event)
+        for event in log["events"]
+    )
 
 
 def test_cp0_json_file_to_clean_outputs(tmp_path, capsys) -> None:
