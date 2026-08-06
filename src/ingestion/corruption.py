@@ -45,6 +45,7 @@ def corrupt_clean_dataframe(
     if missing:
         raise ValueError(f"Clean dataframe is missing required columns: {missing}")
 
+    baseline_snapshot = df.copy(deep=True)
     corrupted = df.copy(deep=True).reset_index(drop=True)
     events: list[dict[str, object]] = []
 
@@ -60,9 +61,23 @@ def corrupt_clean_dataframe(
         .head(drop_count)
     )
     if not latest.empty:
+        before_count = len(corrupted)
         ids = latest["paper_id"].astype(str).tolist()
         corrupted = corrupted.drop(index=latest.index).reset_index(drop=True)
-        events.append({"type": "drop_latest", "paper_ids": ids, "count": len(ids)})
+        events.append(
+            {
+                "type": "latest_drop",
+                "record_ids": ids,
+                "parameters": {
+                    "field": "published",
+                    "selection": "newest_first",
+                    "corruption_rate": corruption_rate,
+                    "records_removed": len(ids),
+                },
+                "before_count": before_count,
+                "after_count": len(corrupted),
+            }
+        )
 
     scenarios = max(1, round(len(corrupted) * corruption_rate)) if len(corrupted) else 0
     rng = random.Random(seed)
@@ -75,10 +90,15 @@ def corrupt_clean_dataframe(
         corrupted.loc[blank_indices, "summary"] = ""
         events.append(
             {
-                "type": "blank_summary",
-                "paper_ids": corrupted.loc[blank_indices, "paper_id"].tolist(),
-                "before_lengths": before_lengths,
-                "after_length": 0,
+                "type": "missing",
+                "record_ids": corrupted.loc[blank_indices, "paper_id"].tolist(),
+                "parameters": {
+                    "field": "summary",
+                    "replacement": "",
+                    "before_lengths": before_lengths,
+                },
+                "before_count": len(corrupted),
+                "after_count": len(corrupted),
             }
         )
 
@@ -89,9 +109,16 @@ def corrupt_clean_dataframe(
             corrupted.at[index, "summary"] = f"{corrupted.at[index, 'summary']} [NOISE:{token}]"
         events.append(
             {
-                "type": "summary_noise",
-                "paper_ids": corrupted.loc[noise_indices, "paper_id"].tolist(),
-                "noise_tokens": noise_tokens,
+                "type": "noise",
+                "record_ids": corrupted.loc[noise_indices, "paper_id"].tolist(),
+                "parameters": {
+                    "field": "summary",
+                    "format": "[NOISE:{token}]",
+                    "token_length": 24,
+                    "tokens": noise_tokens,
+                },
+                "before_count": len(corrupted),
+                "after_count": len(corrupted),
             }
         )
 
@@ -102,9 +129,14 @@ def corrupt_clean_dataframe(
         events.append(
             {
                 "type": "truncate_title",
-                "paper_ids": corrupted.loc[truncate_indices, "paper_id"].tolist(),
-                "before_lengths": original_lengths,
-                "max_after_length": 12,
+                "record_ids": corrupted.loc[truncate_indices, "paper_id"].tolist(),
+                "parameters": {
+                    "field": "title",
+                    "before_lengths": original_lengths,
+                    "max_after_length": 12,
+                },
+                "before_count": len(corrupted),
+                "after_count": len(corrupted),
             }
         )
 
@@ -112,6 +144,8 @@ def corrupt_clean_dataframe(
     if stale_indices:
         dates = pd.to_datetime(corrupted.loc[stale_indices, "published"], errors="coerce")
         stale_dates = dates - pd.DateOffset(years=10)
+        before_dates = dates.dt.strftime("%Y-%m-%d").tolist()
+        after_dates = stale_dates.dt.strftime("%Y-%m-%d").tolist()
         corrupted.loc[stale_indices, "published"] = stale_dates.dt.strftime("%Y-%m-%d")
         if "age_days" in corrupted.columns:
             corrupted.loc[stale_indices, "age_days"] = (
@@ -120,7 +154,20 @@ def corrupt_clean_dataframe(
                 .astype(int)
                 + 3652
             )
-        events.append({"type": "stale_published", "paper_ids": corrupted.loc[stale_indices, "paper_id"].tolist()})
+        events.append(
+            {
+                "type": "old_date",
+                "record_ids": corrupted.loc[stale_indices, "paper_id"].tolist(),
+                "parameters": {
+                    "field": "published",
+                    "years_shifted": 10,
+                    "before_dates": before_dates,
+                    "after_dates": after_dates,
+                },
+                "before_count": len(corrupted),
+                "after_count": len(corrupted),
+            }
+        )
 
     # Rebuild derived fields after all source-field corruptions.
     corrupted["summary_chars"] = corrupted["summary"].fillna("").astype(str).str.len()
@@ -136,9 +183,22 @@ def corrupt_clean_dataframe(
 
     duplicate_count = min(scenarios, len(corrupted))
     if duplicate_count:
+        before_count = len(corrupted)
         duplicates = corrupted.head(duplicate_count).copy(deep=True)
         corrupted = pd.concat([corrupted, duplicates], ignore_index=True)
-        events.append({"type": "duplicate_rows", "paper_ids": duplicates["paper_id"].tolist()})
+        events.append(
+            {
+                "type": "duplicate",
+                "record_ids": duplicates["paper_id"].astype(str).tolist(),
+                "parameters": {
+                    "key": "paper_id",
+                    "copies_per_record": 1,
+                    "records_added": duplicate_count,
+                },
+                "before_count": before_count,
+                "after_count": len(corrupted),
+            }
+        )
 
     log_path = Path(output_log_path)
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -147,6 +207,7 @@ def corrupt_clean_dataframe(
         "corruption_rate": corruption_rate,
         "baseline_rows": int(len(df)),
         "corrupted_rows": int(len(corrupted)),
+        "baseline_unchanged": df.equals(baseline_snapshot),
         "events": events,
     }
     log_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

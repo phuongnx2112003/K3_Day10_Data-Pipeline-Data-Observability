@@ -216,3 +216,43 @@ duplicate IDs, 2 summary rỗng, tổng stale rows tăng từ 1 lên 3 và
 `min_summary_chars` giảm xuống 0. Kết quả được lưu tại
 `data/quality/corrupted_quality.json`, chứng minh anomalies đã đi vào artifact
 thật và được hệ thống quan sát phát hiện.
+
+## CP5 - Corruption audit log và nghiệm thu corrupted dataset
+
+Đã hoàn thiện `corrupt_clean_dataframe` với năm nhóm lỗi bắt buộc: `missing`,
+`latest_drop`, `noise`, `old_date`, `duplicate`. Kịch bản truncate title từ CP4
+được giữ lại như một corruption bổ sung. Hàm làm việc trên deep copy và log ghi
+giá trị kiểm tra thực tế `baseline_unchanged`.
+
+Mỗi event trong `data/results/corruption_log.json` hiện có cùng audit contract:
+
+- `type`: loại corruption.
+- `record_ids`: toàn bộ paper ID bị tác động.
+- `parameters`: field, rate/mức độ và giá trị đặc thù của action.
+- `before_count`: row count ngay trước action.
+- `after_count`: row count ngay sau action.
+
+Parameters chi tiết gồm độ dài summary trước khi blank; từng noise token và độ
+dài token; độ dài title trước/sau truncate; ngày trước/sau và số năm dịch lùi;
+selection/rate của latest drop; khóa dedupe và số copies của duplicate.
+
+Đã sinh lại corrupted CSV/JSON và đối chiếu tự động từng event với dữ liệu:
+
+- `latest_drop`: 2 IDs trong log không còn trong corrupted dataset; count 24 → 22.
+- `missing`: đúng 2 IDs có summary rỗng; count giữ nguyên 22 → 22.
+- `noise`: đúng token đã log xuất hiện ở summary của từng ID; count 22 → 22.
+- `old_date`: ngày của đúng 2 IDs khớp `after_dates` trong log; count 22 → 22.
+- `duplicate`: đúng 2 IDs có ít nhất hai occurrences; count 22 → 24.
+- `truncate_title`: đúng 2 IDs bị giới hạn title còn tối đa 12 ký tự.
+- `text_for_embedding` của mọi row khớp title/summary sau corruption.
+- Baseline DataFrame không bị mutate.
+
+Hai dataset khác nhau cả về nội dung lẫn checksum:
+
+- Baseline SHA-256:
+  `4c6d40677d8542bceb2561d5ff4465f49334efded35c399fb68db590a67914e2`.
+- Corrupted SHA-256:
+  `0793aad67ec8dd6ac83faf84f079a3e76cb7f0366a7fd6fb5249f6d3bc01ca00`.
+
+Tất cả 11 điều kiện nghiệm thu (counts, log fields, năm loại lỗi, rebuilt text,
+baseline bất biến và checksum khác nhau) đều trả True. Bộ test đạt 4 tests.

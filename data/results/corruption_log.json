@@ -3,63 +3,109 @@
   "corruption_rate": 0.1,
   "baseline_rows": 24,
   "corrupted_rows": 24,
+  "baseline_unchanged": true,
   "events": [
     {
-      "type": "drop_latest",
-      "paper_ids": [
+      "type": "latest_drop",
+      "record_ids": [
         "10.2118/234689-pa",
         "10.63646/kpqm1958"
       ],
-      "count": 2
+      "parameters": {
+        "field": "published",
+        "selection": "newest_first",
+        "corruption_rate": 0.1,
+        "records_removed": 2
+      },
+      "before_count": 24,
+      "after_count": 22
     },
     {
-      "type": "blank_summary",
-      "paper_ids": [
+      "type": "missing",
+      "record_ids": [
         "10.35314/3y9hy151",
         "10.3390/buildings16132637"
       ],
-      "before_lengths": [
-        1462,
-        2207
-      ],
-      "after_length": 0
+      "parameters": {
+        "field": "summary",
+        "replacement": "",
+        "before_lengths": [
+          1462,
+          2207
+        ]
+      },
+      "before_count": 22,
+      "after_count": 22
     },
     {
-      "type": "summary_noise",
-      "paper_ids": [
+      "type": "noise",
+      "record_ids": [
         "10.21203/rs.3.rs-10178277/v1",
         "10.55041/isjem07213"
       ],
-      "noise_tokens": [
-        "z*1C5Jau2RJtBRnlWmTSHf6&",
-        "pWkLUyifDLkDmWJ6UuVTAIjv"
-      ]
+      "parameters": {
+        "field": "summary",
+        "format": "[NOISE:{token}]",
+        "token_length": 24,
+        "tokens": [
+          "z*1C5Jau2RJtBRnlWmTSHf6&",
+          "pWkLUyifDLkDmWJ6UuVTAIjv"
+        ]
+      },
+      "before_count": 22,
+      "after_count": 22
     },
     {
       "type": "truncate_title",
-      "paper_ids": [
+      "record_ids": [
         "10.21203/rs.3.rs-9882260/v1",
         "10.22214/ijraset.2026.82233"
       ],
-      "before_lengths": [
-        163,
-        143
-      ],
-      "max_after_length": 12
+      "parameters": {
+        "field": "title",
+        "before_lengths": [
+          163,
+          143
+        ],
+        "max_after_length": 12
+      },
+      "before_count": 22,
+      "after_count": 22
     },
     {
-      "type": "stale_published",
-      "paper_ids": [
+      "type": "old_date",
+      "record_ids": [
         "10.20944/preprints202604.0339.v1",
         "10.3390/app16052244"
-      ]
+      ],
+      "parameters": {
+        "field": "published",
+        "years_shifted": 10,
+        "before_dates": [
+          "2026-04-07",
+          "2026-02-26"
+        ],
+        "after_dates": [
+          "2016-04-07",
+          "2016-02-26"
+        ]
+      },
+      "before_count": 22,
+      "after_count": 22
     },
     {
-      "type": "duplicate_rows",
-      "paper_ids": [
+      "type": "duplicate",
+      "record_ids": [
         "10.1007/s10278-026-02086-9",
         "10.21079/11681/50309"
-      ]
+      ],
+      "parameters": {
+        "key": "paper_id",
+        "copies_per_record": 1,
+        "records_added": 2
+      },
+      "before_count": 22,
+      "after_count": 24
     }
   ]
 }
