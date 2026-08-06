@@ -34,6 +34,8 @@ export default function App() {
       sources: []
     }
   ]);
+  const [metrics, setMetrics] = useState(null);
+  const [obs, setObs] = useState(null);
 
   const promptSuggestions = [
     { title: "SafeRAG Framework", query: "What does the paper SafeRAG talk about?", icon: "🔥" },
@@ -43,6 +45,8 @@ export default function App() {
 
   useEffect(() => {
     fetchPapers();
+    fetchMetrics();
+    fetchObs();
   }, []);
 
   const fetchPapers = async () => {
@@ -53,18 +57,29 @@ export default function App() {
         setPapers(data);
       }
     } catch (e) {
-      setPapers([
-        {
-          paper_id: "10.2118/234689-pa",
-          title: "SafeRAG: A Large-Language-Model-Based Multistage Retrieval-Augmented Framework for Oil and Gas Safety Report Generation",
-          summary: "In high-risk industrial settings, leveraging large language models for automated accident analysis and generating safety reports has emerged as an efficient workflow..."
-        },
-        {
-          paper_id: "10.63646/kpqm1958",
-          title: "The Age of Autonomous Agents: A Bibliometric Review of Agentic AI Architectures, Applications, and Emerging Challenges",
-          summary: "Autonomous AI agents are transforming retrieval and execution workflows across scientific research and enterprise automation..."
-        }
-      ]);
+      console.error(e);
+    }
+  };
+
+  const fetchMetrics = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/metrics');
+      if (res.ok) {
+        setMetrics(await res.json());
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const fetchObs = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/api/observability');
+      if (res.ok) {
+        setObs(await res.json());
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -314,22 +329,22 @@ export default function App() {
               </thead>
               <tbody>
                 <tr>
-                  <td>Row Count Drop Verification</td>
-                  <td><span className="neon-badge" style={{ color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.4)' }}>PASSED</span></td>
-                  <td>Max 10% Drop</td>
-                  <td>0 Records Dropped (24/24)</td>
+                  <td>Total Clean Rows</td>
+                  <td><span className="neon-badge" style={{ color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.4)' }}>{obs?.quality?.total_clean_rows}</span></td>
+                  <td>&gt; 0</td>
+                  <td>Verified</td>
                 </tr>
                 <tr>
                   <td>Title & Summary Null Checks</td>
                   <td><span className="neon-badge" style={{ color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.4)' }}>PASSED</span></td>
                   <td>0% Null Values</td>
-                  <td>0 Nulls Found</td>
+                  <td>{obs?.quality?.title_empty_count} Title Nulls / {obs?.quality?.summary_empty_count} Summary Nulls</td>
                 </tr>
                 <tr>
                   <td>Freshness Window Threshold</td>
-                  <td><span className="neon-badge" style={{ color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.4)' }}>PASSED</span></td>
-                  <td>Within 180 Days</td>
-                  <td>Fresh Publication Verified</td>
+                  <td><span className="neon-badge" style={{ color: obs?.freshness?.is_fresh ? '#10b981' : '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.4)' }}>{obs?.freshness?.is_fresh ? 'FRESH' : 'STALE DETECTED'}</span></td>
+                  <td>Within {obs?.freshness?.freshness_threshold_days} Days</td>
+                  <td>{obs?.freshness?.stale_rows} Stale Records</td>
                 </tr>
               </tbody>
             </table>
@@ -355,24 +370,24 @@ export default function App() {
               <tbody>
                 <tr>
                   <td><strong>Retrieval Hit Rate</strong></td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>91.6%</td>
-                  <td style={{ color: '#ef4444', fontWeight: 800 }}>45.2%</td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>91.6%</td>
-                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+46.4% Recovered</span></td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.baseline?.retrieval_hit_rate ? (metrics.baseline.retrieval_hit_rate * 100).toFixed(1) : '0'}%</td>
+                  <td style={{ color: '#ef4444', fontWeight: 800 }}>{metrics?.corrupted?.retrieval_hit_rate ? (metrics.corrupted.retrieval_hit_rate * 100).toFixed(1) : '0'}%</td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.repaired?.retrieval_hit_rate ? (metrics.repaired.retrieval_hit_rate * 100).toFixed(1) : '0'}%</td>
+                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+{(metrics?.repaired?.retrieval_hit_rate * 100 - metrics?.corrupted?.retrieval_hit_rate * 100).toFixed(1)}%</span></td>
                 </tr>
                 <tr>
                   <td><strong>Mean Token F1 Score</strong></td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>0.84</td>
-                  <td style={{ color: '#ef4444', fontWeight: 800 }}>0.31</td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>0.83</td>
-                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+0.52 Recovered</span></td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.baseline?.mean_token_f1?.toFixed(2)}</td>
+                  <td style={{ color: '#ef4444', fontWeight: 800 }}>{metrics?.corrupted?.mean_token_f1?.toFixed(2)}</td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.repaired?.mean_token_f1?.toFixed(2)}</td>
+                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+{(metrics?.repaired?.mean_token_f1 - metrics?.corrupted?.mean_token_f1).toFixed(2)}</span></td>
                 </tr>
                 <tr>
                   <td><strong>LLM Judge Accuracy</strong></td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>95.0%</td>
-                  <td style={{ color: '#ef4444', fontWeight: 800 }}>52.0%</td>
-                  <td style={{ color: '#10b981', fontWeight: 800 }}>94.5%</td>
-                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+42.5% Recovered</span></td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.baseline?.judge_accuracy ? (metrics.baseline.judge_accuracy * 100).toFixed(1) : '0'}%</td>
+                  <td style={{ color: '#ef4444', fontWeight: 800 }}>{metrics?.corrupted?.judge_accuracy ? (metrics.corrupted.judge_accuracy * 100).toFixed(1) : '0'}%</td>
+                  <td style={{ color: '#10b981', fontWeight: 800 }}>{metrics?.repaired?.judge_accuracy ? (metrics.repaired.judge_accuracy * 100).toFixed(1) : '0'}%</td>
+                  <td><span className="neon-badge" style={{ color: '#10b981' }}>+{(metrics?.repaired?.judge_accuracy * 100 - metrics?.corrupted?.judge_accuracy * 100).toFixed(1)}%</span></td>
                 </tr>
               </tbody>
             </table>

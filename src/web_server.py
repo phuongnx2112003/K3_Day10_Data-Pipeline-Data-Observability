@@ -59,12 +59,44 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             
-            clean_json_path = settings.paths.clean_json
+            # Đổi sang đọc file repaired để demo
+            clean_json_path = root_dir / "data" / "clean" / "papers_clean_repaired.json"
             if clean_json_path.exists():
                 with open(clean_json_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
             else:
                 data = []
+            self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
+            return
+            
+        elif self.path == "/api/metrics":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            
+            def load_json(p):
+                return json.load(open(p, 'r')) if Path(p).exists() else {}
+                
+            data = {
+                "baseline": load_json(settings.paths.results_dir / "baseline_metrics.json"),
+                "corrupted": load_json(settings.paths.results_dir / "corrupted_metrics.json"),
+                "repaired": load_json(settings.paths.results_dir / "repaired_metrics.json")
+            }
+            self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
+            return
+            
+        elif self.path == "/api/observability":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            
+            def load_json(p):
+                return json.load(open(p, 'r')) if Path(p).exists() else {}
+                
+            data = {
+                "quality": load_json(settings.paths.quality_dir / "repaired_quality.json"),
+                "freshness": load_json(settings.paths.quality_dir / "repaired_freshness.json")
+            }
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode("utf-8"))
             return
             
@@ -88,6 +120,8 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
             if agent:
                 try:
                     answer = run_agent_question(agent, question)
+                    if not isinstance(answer, str):
+                        answer = str(answer)
                 except Exception as e:
                     answer = f"Đã xảy ra lỗi khi gọi Agent: {e}"
             else:
