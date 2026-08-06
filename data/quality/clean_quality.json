@@ -1,6 +1,6 @@
 {
-  "report_name": "repaired_quality",
-  "generated_at": "2026-08-06T05:22:54.790556Z",
+  "report_name": "clean_quality",
+  "generated_at": "2026-08-06T05:22:54.783689Z",
   "total_rows": 24,
   "required_columns": [
     "paper_id",

@@ -256,3 +256,69 @@ Hai dataset khác nhau cả về nội dung lẫn checksum:
 
 Tất cả 11 điều kiện nghiệm thu (counts, log fields, năm loại lỗi, rebuilt text,
 baseline bất biến và checksum khác nhau) đều trả True. Bộ test đạt 4 tests.
+
+## CP6 - Repair từ raw và đối chiếu clean/corrupted/repaired
+
+### Quy trình repair và provenance
+
+Repair được thực thi lại từ `data/raw/crossref_records.json` bằng đúng
+`load_raw_records` và `build_clean_dataframe` trong ingestion pipeline. Kết quả
+được ghi mới vào `data/clean/papers_clean_repaired.csv` và
+`data/clean/papers_clean_repaired.json` bằng utilities xuất dữ liệu. Không có
+thao tác copy baseline, không đọc baseline để tạo repaired và không sửa tay row.
+
+Counter của lần chạy repair:
+
+- Raw input: 24 records.
+- Drop do thiếu core field/ngày lỗi: 0.
+- Drop duplicate raw ID: 0.
+- Repaired output: 24 records.
+
+### Kiểm tra repaired dataset
+
+Repaired có đúng 16 cột operational schema giống baseline, gồm `age_days`,
+`summary_chars`, flattened authors/categories và `text_for_embedding`. Kết quả
+quality trên dữ liệu repaired thật:
+
+- 24 rows và 24 unique paper IDs.
+- Duplicate ID: 0.
+- Blank summary: 0.
+- Noise marker: 0.
+- Title dài tối đa 12 ký tự do corruption: 0.
+- Empty `text_for_embedding`: 0.
+- Stale rows: 1, trở về đúng mức tự nhiên của nguồn.
+- `overall_pass: true`.
+
+Freshness repaired được lưu tại `data/quality/repaired_freshness.json`; quality
+được lưu tại `data/quality/repaired_quality.json`.
+
+### So sánh ba trạng thái
+
+| Signal | Clean | Corrupted | Repaired |
+| --- | ---: | ---: | ---: |
+| Rows | 24 | 24 | 24 |
+| Unique paper IDs | 24 | 22 | 24 |
+| Duplicate rows theo ID | 0 | 2 | 0 |
+| Blank summary | 0 | 2 | 0 |
+| Noise rows | 0 | 2 | 0 |
+| Title ngắn ≤ 12 ký tự | 0 | 2 | 0 |
+| Stale rows | 1 | 3 | 1 |
+| Empty embedding text | 0 | 0 | 0 |
+| Quality overall | Pass | Fail | Pass |
+
+Số rows corrupted vẫn là 24 vì corruption xóa 2 latest rồi thêm 2 duplicate;
+row count đơn lẻ vì thế không phát hiện được lỗi. Unique IDs và quality signals
+cho thấy corpus thực sự đã mất hai papers và thay bằng hai bản sao. Repair đọc
+lại raw phục hồi hai IDs đã mất, loại duplicate/noise/missing/old-date anomalies
+và rebuild embedding text sạch.
+
+Canonical SHA-256:
+
+- Clean: `54241a54431fb172fef657057830227d12373633c17cda95c434d6b12109b571`.
+- Corrupted: `887ddeabb350126b9ab6d8cb1e5e96e4a5bdaab7ee5dfe3f3031e8e7788899ea`.
+- Repaired: `54241a54431fb172fef657057830227d12373633c17cda95c434d6b12109b571`.
+
+DataFrame clean khác corrupted, còn repaired bằng clean ở toàn bộ schema và
+giá trị. Checksum repaired trùng clean là kết quả của việc tái tạo xác định từ
+cùng raw source và cleaning rules, không phải do sao chép artifact. Bộ test sau
+repair đạt 4 tests.
